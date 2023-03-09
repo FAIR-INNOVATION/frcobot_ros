@@ -1,0 +1,11 @@
+moveit_setup_assistant_config:
+  URDF:
+    package: frcobot_description
+    relative_path: urdf/fr10_robot.urdf
+    xacro_args: ""
+  SRDF:
+    relative_path: config/FR10-V5.0.SLDASM.srdf
+  CONFIG:
+    author_name: frzjq
+    author_email: zhaojinqi@frtech.fr
+    generated_timestamp: 1635487587

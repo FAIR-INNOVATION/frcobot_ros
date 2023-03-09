@@ -1,0 +1,13 @@
+<launch>
+
+	<!-- params -->
+	<rosparam command="load" file="$(find frcobot_camera)/config/binPicking.yaml"/>
+	<param name="robot_ip" type="string" value="192.168.58.2"/>
+	<param name="rvs_ip" type="string" value="192.168.58.10"/>
+	<param name="rvs_port" type="int" value="2013"/>
+
+	<!-- eyeinhand -->
+	<node pkg="frcobot_camera" type="binpicking" name="binpicking" output="screen">
+	</node>
+
+</launch>

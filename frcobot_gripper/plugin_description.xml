@@ -1,0 +1,9 @@
+<library path="lib/libfrcobot_gripper">
+  <class name="rviz_gripper_commander/GripperPanel"
+         type="rviz_gripper_commander::GripperPanel"
+         base_class_type="rviz::Panel">
+    <description>
+      A panel widget allowing IO gripper base control.
+    </description>
+  </class>
+</library>

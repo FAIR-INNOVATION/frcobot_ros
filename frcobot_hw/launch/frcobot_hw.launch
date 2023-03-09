@@ -1,0 +1,13 @@
+<launch>
+
+	<!-- params -->
+	<param name="robot_ip" type="string" value="192.168.58.2"/>
+	<param name="robot_port" type="int" value="8083"/>
+
+	<!-- frcobot status node -->
+	<node pkg="frcobot_hw" type="frcobot_status_node" name="frcobot_status_node" output="screen" />
+
+	<!-- frcobot control demo -->
+	<node pkg="frcobot_hw" type="frcobot_cmd_demo" name="frcobot_cmd_demo" output="screen" />
+	
+</launch>

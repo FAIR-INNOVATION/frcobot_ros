@@ -1,0 +1,12 @@
+<launch>
+
+	<!-- params -->
+	<param name="robot_ip" type="string" value="192.168.58.2"/>
+	<param name="rvs_ip" type="string" value="192.168.58.10"/>
+	<param name="rvs_port" type="int" value="2013"/>
+
+	<!-- eyeinhand -->
+	<node pkg="frcobot_camera" type="eyeinhand" name="eyeinhand" output="screen">
+	</node>
+
+</launch>

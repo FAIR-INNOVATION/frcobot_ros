@@ -1,0 +1,14 @@
+std_msgs/Header header
+uint8 frame_count
+uint8 program_state
+uint8 error_code
+uint8 robot_mode
+float64[] cur_joints_pose
+float64[] cur_tcp_pose
+float64[] cur_joints_torque
+uint8 tool_num
+uint8[] cl_dgt_output_h
+uint8[] cl_dgt_output_l
+uint8[] tl_dgt_output_l
+uint8 robot_motion_done
+uint8 gripper_motion_done

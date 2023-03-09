@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>frcobot_description</name>
+  <version>0.0.1</version>
+  <description>The frcobot_description package</description>
+  <maintainer email="frzjq@todo.todo">Fair Innovation</maintainer>
+  <license>Apache 2.0</license>
+  <author email="frzjq@example.com">frzjq</author> 
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>urdf</build_depend>
+  <build_depend>xacro</build_depend>
+  <build_export_depend>urdf</build_export_depend>
+  <build_export_depend>xacro</build_export_depend>
+  <exec_depend>urdf</exec_depend>
+  <exec_depend>xacro</exec_depend>
+  <test_depend>rosunit</test_depend>
+
+</package>

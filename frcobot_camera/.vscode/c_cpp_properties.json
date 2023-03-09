@@ -1,0 +1,25 @@
+{
+  "configurations": [
+    {
+      "browse": {
+        "databaseFilename": "${default}",
+        "limitSymbolsToIncludedHeaders": false
+      },
+      "includePath": [
+        "/home/frzjq/catkin_ws/devel/include/**",
+        "/opt/ros/melodic/include/**",
+        "/home/frzjq/catkin_ws/src/frcobot_ros_platform/frcobot_camera/include/**",
+        "/home/frzjq/catkin_ws/src/frcobot_ros_platform/frcobot_gripper/include/**",
+        "/home/frzjq/catkin_ws/src/frcobot_test/include/**",
+        "/home/frzjq/catkin_ws/src/FR5/ros_control_boilerplate/include/**",
+        "/usr/include/**"
+      ],
+      "name": "ROS",
+      "intelliSenseMode": "gcc-x64",
+      "compilerPath": "/usr/bin/gcc",
+      "cStandard": "gnu11",
+      "cppStandard": "c++14"
+    }
+  ],
+  "version": 4
+}
