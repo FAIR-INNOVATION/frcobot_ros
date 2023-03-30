@@ -1,9 +1,11 @@
-20230301简要说明：
-1、首先，将frcobot_hw功能包拷贝到ros用户工作空间下的src文件夹，一般路径为：~/catkin_ws/src
+# Quick start
 
-2、其次，编译用户空间，在终端中执行如下指令：
+1、先将frcobot_hw功能包拷贝到ros用户工作空间下的src文件夹，一般路径为：~/catkin_ws/src
+
+2、编译用户空间，在终端中执行如下指令：
 
 cd ~/catkin_ws/
+
 catkin_make
 
 3、编译成功后，需要将lib下面的文件拷贝到/opt/ros/melodic/lib路径下，一般指令为：

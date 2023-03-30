@@ -632,6 +632,56 @@ public:
 	 *@return  错误码
 	 */	
 	errno_t  GetActualJointPosRadian(uint8_t flag, JointPos *jPos);
+
+	/**
+	 * @brief  获取关节反馈速度-deg/s
+	 * @param  [in] flag 0-阻塞，1-非阻塞
+	 * @param  [out] speed [x,y,z,rx,ry,rz]速度
+	 * @return  错误码 
+	 */	
+	errno_t  GetActualJointSpeedsDegree(uint8_t flag, float speed[6]);
+
+	/**
+	 * @brief  获取关节反馈速度-rad/s
+	 * @param  [in] flag 0-阻塞，1-非阻塞
+	 * @param  [out] speed [x,y,z,rx,ry,rz]速度
+	 * @return  错误码 
+	 */		
+	errno_t  GetActualJointSpeedsRadian(uint8_t flag, float speed[6]);
+
+	/**
+	 * @brief  获取TCP指令速度
+	 * @param  [in] flag 0-阻塞，1-非阻塞
+	 * @param  [out] tcp_speed 线性速度
+	 * @param  [out] ori_speed 姿态速度
+	 * @return  错误码 
+	 */
+	errno_t  GetTargetTCPCompositeSpeed(uint8_t flag, float *tcp_speed, float *ori_speed);
+
+	/**
+	 * @brief  获取TCP反馈速度
+	 * @param  [in] flag 0-阻塞，1-非阻塞
+	 * @param  [out] tcp_speed 线性速度
+	 * @param  [out] ori_speed 姿态速度
+	 * @return  错误码 
+	 */	
+	errno_t  GetActualTCPCompositeSpeed(uint8_t flag, float *tcp_speed, float *ori_speed);
+
+	/**
+	 * @brief  获取TCP指令速度
+	 * @param  [in] flag 0-阻塞，1-非阻塞
+	 * @param  [out] speed [x,y,z,rx,ry,rz]速度
+	 * @return  错误码 
+	 */	
+	errno_t  GetTargetTCPSpeed(uint8_t flag, float speed[6]);
+
+	/**
+	 * @brief  获取TCP反馈速度
+	 * @param  [in] flag 0-阻塞，1-非阻塞
+	 * @param  [out] speed [x,y,z,rx,ry,rz]速度
+	 * @return  错误码 
+	 */	
+	errno_t  GetActualTCPSpeed(uint8_t flag, float speed[6]);
 	
 	/**
 	 *@brief  获取当前工具位姿
@@ -891,8 +941,8 @@ public:
 	
 	/**
 	 *@brief  配置夹爪
-	 *@param  [in] company  夹爪厂商，待定
-	 *@param  [in] device  设备号，暂不使用，默认为0
+	 *@param  [in] company  夹爪厂商，1-Robotiq，2-慧灵，3-天机，4-大寰，5-知行
+	 *@param  [in] device  设备号，Robotiq(0-2F-85系列)，慧灵(0-NK系列,1-Z-EFG-100)，天机(0-TEG-110)，大寰(0-PGI-140)，知行(0-CTPM2F20)
 	 *@param  [in] softvesion  软件版本号，暂不使用，默认为0
 	 *@param  [in] bus 设备挂在末端总线位置，暂不使用，默认为0
 	 *@return  错误码
@@ -901,8 +951,8 @@ public:
 	
 	/**
 	 *@brief  获取夹爪配置
-	 *@param  [in] company  夹爪厂商，待定
-	 *@param  [in] device  设备号，暂不使用，默认为0
+	 *@param  [in] company  夹爪厂商，1-Robotiq，2-慧灵，3-天机，4-大寰，5-知行
+	 *@param  [in] device  设备号，Robotiq(0-2F-85系列)，慧灵(0-NK系列,1-Z-EFG-100)，天机(0-TEG-110)，大寰(0-PGI-140)，知行(0-CTPM2F20)
 	 *@param  [in] softvesion  软件版本号，暂不使用，默认为0
 	 *@param  [in] bus 设备挂在末端总线位置，暂不使用，默认为0
 	 *@return  错误码
@@ -957,8 +1007,8 @@ public:
 
 	/**
 	 *@brief  配置力传感器
-	 *@param  [in] company  力传感器厂商，17-坤维科技
-	 *@param  [in] device  设备号，暂不使用，默认为0
+	 *@param  [in] company  力传感器厂商，17-坤维科技，19-航天十一院，20-ATI传感器，21-中科米点，22-伟航敏芯
+	 *@param  [in] device  设备号，坤维(0-KWR75B)，航天十一院(0-MCS6A-200-4)，ATI(0-AXIA80-M8)，中科米点(0-MST2010)，伟航敏芯(0-WHC6L-YB-10A)
 	 *@param  [in] softvesion  软件版本号，暂不使用，默认为0
 	 *@param  [in] bus 设备挂在末端总线位置，暂不使用，默认为0
 	 *@return  错误码
@@ -1027,17 +1077,19 @@ public:
 
 	/**
 	 *@brief  获取参考坐标系下力/扭矩数据
+	 *@param  [in] flag 0-阻塞，1-非阻塞
 	 *@param  [out] ft  力/扭矩，fx,fy,fz,tx,ty,tz
 	 *@return  错误码
 	 */	
-	errno_t  FT_GetForceTorqueRCS(ForceTorque *ft);	
+	errno_t  FT_GetForceTorqueRCS(uint8_t flag, ForceTorque *ft);	
 
 	/**
 	 *@brief  获取力传感器原始力/扭矩数据
+	 *@param  [in] flag 0-阻塞，1-非阻塞
 	 *@param  [out] ft  力/扭矩，fx,fy,fz,tx,ty,tz
 	 *@return  错误码
 	 */	
-	errno_t  FT_GetForceTorqueOrigin(ForceTorque *ft);	
+	errno_t  FT_GetForceTorqueOrigin(uint8_t flag, ForceTorque *ft);	
 
 	/**
 	 *@brief  碰撞守护
@@ -1061,8 +1113,8 @@ public:
 	 *@param  [in] ft_pid 力pid参数，力矩pid参数
 	 *@param  [in] adj_sign 自适应启停控制，0-关闭，1-开启
 	 *@param  [in] ILC_sign ILC启停控制， 0-停止，1-训练，2-实操
-	 *@param  [in] 最大调整距离，单位mm
-	 *@param  [in] 最大调整角度，单位deg
+	 *@param  [in] max_dis 最大调整距离，单位mm
+	 *@param  [in] max_ang 最大调整角度，单位deg
 	 *@return  错误码
 	 */	
 	errno_t  FT_Control(uint8_t flag, int sensor_id, uint8_t select[6], ForceTorque *ft, float ft_pid[6], uint8_t adj_sign, uint8_t ILC_sign, float max_dis, float max_ang);	
@@ -1071,7 +1123,7 @@ public:
 	 *@brief  螺旋线探索
 	 *@param  [in] rcs 参考坐标系，0-工具坐标系，1-基坐标系
 	 *@param  [in] dr 每圈半径进给量
-	 *@param  [in] ft 力/扭矩阈值，fx,fy,fz,tx,ty,tz，范围[0~100]
+	 *@param  [in] ft 插入动作触发力，单位N
 	 *@param  [in] max_t_ms 最大探索时间，单位ms
 	 *@param  [in] max_vel 最大线速度，单位mm/s
 	 *@return  错误码
@@ -1094,7 +1146,7 @@ public:
 	/**
 	 *@brief  直线插入
 	 *@param  [in] rcs 参考坐标系，0-工具坐标系，1-基坐标系
-	 *@param  [in] ft  力/扭矩阈值，fx,fy,fz,tx,ty,tz，范围[0~100]
+	 *@param  [in] ft  动作终止力阈值，单位N，范围[0~100]
 	 *@param  [in] lin_v 直线速度，单位mm/s
 	 *@param  [in] lin_a 直线加速度，单位mm/s^2，暂不使用
 	 *@param  [in] max_dis 最大插入距离，单位mm
@@ -1111,7 +1163,7 @@ public:
 	 *@param  [in] lin_v 探索直线速度，单位mm/s
 	 *@param  [in] lin_a 探索直线加速度，单位mm/s^2，暂不使用，默认为0
 	 *@param  [in] max_dis 最大探索距离，单位mm
-	 *@param  [in] ft  动作终止力/扭矩阈值，fx,fy,fz,tx,ty,tz	 
+	 *@param  [in] ft  动作终止力阈值，单位N
 	 *@return  错误码
 	 */	
     errno_t  FT_FindSurface(int rcs, uint8_t dir, uint8_t axis, float lin_v, float lin_a, float max_dis, float ft);	
@@ -1147,6 +1199,9 @@ public:
 	 *@brief  机器人接口类析构函数
 	 */    
     ~FRRobot();
+
+private:
+	char serverUrl[64];
 };
 
 #endif
