@@ -12,7 +12,7 @@
         
 <inertial>
             <origin xyz="-0.00044457 0.0004811 0.032592" rpy="0 0 0" />
-            <mass value="1.073" />
+            <mass value="1.62" />
             <inertia ixx="0.0024567" ixy="-1.5435E-05" ixz="-1.3507E-05" iyy="0.0024575" iyz="1.4421E-05" izz="0.0038879" />
         </inertial>
 
@@ -36,7 +36,7 @@
         
 <inertial>
             <origin xyz="1.3785E-06 -0.0031495 0.14526" rpy="0 0 0" />
-            <mass value="4.1676" />
+            <mass value="4.38" />
             <inertia ixx="0.010397" ixy="-1.005E-08" ixz="1.6274E-07" iyy="0.010278" iyz="0.00015856" izz="0.0076307" />
         </inertial>
 
@@ -70,7 +70,7 @@
         
 <inertial>
             <origin xyz="-2.2928E-05 0.33278 0.084237" rpy="0 0 0" />
-            <mass value="20.782" />
+            <mass value="14.46" />
             <inertia ixx="2.9074" ixy="-0.00023104" ixz="-2.5049E-05" iyy="0.12653" iyz="-0.1479" izz="2.8157" />
         </inertial>
 
@@ -104,7 +104,7 @@
         
 <inertial>
             <origin xyz="0.092224 -2.2928E-05 0.084237" rpy="0 0 0" />
-            <mass value="20.782" />
+            <mass value="7.67" />
             <inertia ixx="0.12653" ixy="0.00023104" ixz="0.1479" iyy="2.9074" iyz="-2.5049E-05" izz="2.8157" />
         </inertial>
 
@@ -138,7 +138,7 @@
         
 <inertial>
             <origin xyz="0.48722 -2.2928E-05 0.084237" rpy="0 0 0" />
-            <mass value="20.782" />
+            <mass value="1.63" />
             <inertia ixx="0.12653" ixy="0.00023104" ixz="0.1479" iyy="2.9074" iyz="-2.5049E-05" izz="2.8157" />
         </inertial>
 
@@ -172,7 +172,7 @@
         
 <inertial>
             <origin xyz="-2.396E-06 0.0045906 0.099342" rpy="0 0 0" />
-            <mass value="1.570796" />
+            <mass value="1.58" />
             <inertia ixx="0.0022393" ixy="-1.0022E-07" ixz="-3.2115E-08" iyy="0.0013914" iyz="-2.2223E-05" izz="0.0021864" />
         </inertial>
 
@@ -206,7 +206,7 @@
         
 <inertial>
             <origin xyz="5.8427E-06 7.5807E-05 0.079126" rpy="0 0 0" />
-            <mass value="0.52527" />
+            <mass value="0.53" />
             <inertia ixx="0.00027801" ixy="-3.5346E-07" ixz="-1.7431E-07" iyy="0.00027736" iyz="-7.5888E-08" izz="0.00041582" />
         </inertial>
 
