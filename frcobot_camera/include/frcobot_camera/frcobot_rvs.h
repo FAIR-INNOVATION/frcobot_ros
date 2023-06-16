@@ -31,7 +31,7 @@ char rvs_recv_buf[MAXLINE] = "";
 char rvs_send_buf[MAXLINE] = "";
 struct sockaddr_in rvsserverSendAddr;
 
-FRRobot robot;                 //实例化机器人对象
+FRRobot robot;                 //Instantiate the robot object
 string ROBOTIP;
 const char *robotIP;
 
@@ -54,10 +54,10 @@ uint8_t status_1 = 1;
 uint8_t smooth = 0;
 uint8_t block = 0;
 
-int prepickzlength = -200;           // 抓取点z轴偏移，基于工具坐标系
-int prepickzangle = 0;               // 抓取点z轴偏移，基于工具坐标系
-int retreatzlength = -200;           // 放置点z轴偏移，基于工具坐标系
-int retreatzangle = 0;               // 放置点z轴偏移，基于工具坐标系
+int prepickzlength = -200;           // The z-axis offset of the grab point, based on the tool coordinate system
+int prepickzangle = 0;               // The z-axis offset of the grab point, based on the tool coordinate system
+int retreatzlength = -200;           // The z-axis offset of the placement point, based on the tool coordinate system
+int retreatzangle = 0;               // The z-axis offset of the placement point, based on the tool coordinate system
 
 DescPose flange, pHomePose, offset_pose, p1Pose, p2Pose, p1ActPose, p2ActPose, p1PrePose, p2PrePose, p1PostPose, p2PostPose; 
 JointPos j_rad, pHomeJoint, p1Joint, p2Joint, p1ActJoint, p2ActJoint, p1PreJoint, p1PostJoint, p2PreJoint, p2PostJoint;

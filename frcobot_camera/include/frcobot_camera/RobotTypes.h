@@ -8,75 +8,74 @@ typedef  unsigned char uint8_t;
 typedef  unsigned short int  uint16_t;
 
 /**
- * @brief 关节位置数据类型
- */
+* @brief Joint position data type
+*/
 typedef  struct
 {
-	double jPos[6];   /* 六个关节位置，单位deg */
+	double jPos[6];   /* Six joint positions, unit: deg */
 }JointPos;
 
 /**
-* @brief 笛卡尔空间位置数据类型
+* @brief Cartesian spatial location data type
 */
 typedef struct
 {
-	double x;    /* x轴坐标，单位mm  */
-	double y;    /* y轴坐标，单位mm  */
-	double z;    /* z轴坐标，单位mm  */
+	double x;    /* X-axis coordinate, unit: mm  */
+	double y;    /* Y-axis coordinate, unit: mm  */
+	double z;    /* Z-axis coordinate, unit: mm  */
 } DescTran;
 
 /**
-* @brief 欧拉角姿态数据类型
+* @brief Euler Angle attitude data type
 */
 typedef struct
 {
-	double rx;   /* 绕固定轴X旋转角度，单位：deg  */
-	double ry;   /* 绕固定轴Y旋转角度，单位：deg  */
-	double rz;   /* 绕固定轴Z旋转角度，单位：deg  */
+	double rx;   /* Rotation Angle about fixed axis X, unit: deg  */
+	double ry;   /* Rotation Angle about fixed axis y, unit: deg  */
+	double rz;   /* Rotation Angle about fixed axis Z, unit: deg  */
 } Rpy;
 
 /**
- *@brief 笛卡尔空间位姿类型
- */
+*@brief Cartesian space pose type
+*/
 typedef struct
 {
-	DescTran tran;      /* 笛卡尔空间位置  */
-	Rpy rpy;			/* 笛卡尔空间姿态  */
+	DescTran tran;      /* Cartesian position  */
+	Rpy rpy;            /* Cartesian space attitude  */
 } DescPose;
 
 /**
- * @brief 扩展轴位置数据类型
- */
+* @brief Extension axis position data type
+*/
 typedef  struct
 {
-	double ePos[4];   /* 四个扩展轴位置，单位mm */
+	double ePos[4];   /* Position of four expansion shafts, unit: mm */
 }ExaxisPos;
 
 /**
- * @brief 力传感器的受力分量和力矩分量
- */
+* @brief The force component and torque component of the force sensor
+*/
 typedef struct
 {
-	double fx;  /* 沿x轴受力分量，单位N  */
-	double fy;  /* 沿y轴受力分量，单位N  */
-	double fz;  /* 沿z轴受力分量，单位N  */
-	double tx;  /* 绕x轴力矩分量，单位Nm */
-	double ty;  /* 绕y轴力矩分量，单位Nm */
-	double tz;  /* 绕z轴力矩分量，单位Nm */
+	double fx;  /* Component of force along the x axis, unit: N  */
+	double fy;  /* Component of force along the y axis, unit: N  */
+	double fz;  /* Component of force along the z axis, unit: N  */
+	double tx;  /* Component of torque about the X-axis, unit: Nm */
+	double ty;  /* Component of torque about the Y-axis, unit: Nm */
+	double tz;  /* Component of torque about the Z-axis, unit: Nm */
 } ForceTorque;
 
-
 /**
- * @brief  螺旋参数数据类型
- */
+* @brief  Spiral parameter data type
+*/
 typedef  struct
 {
-	int    circle_num;           /* 螺旋圈数  */
-	float  circle_angle;         /* 螺旋倾角  */
-	float  rad_init;             /* 螺旋初始半径，单位mm  */
-	float  rad_add;              /* 半径增量  */
-	float  rotaxis_add;          /* 转轴方向增量  */
-	unsigned int rot_direction;  /* 旋转方向，0-顺时针，1-逆时针  */
+	int    circle_num;           /* Coil number  */
+	float  circle_angle;         /* Spiral Angle  */
+	float  rad_init;             /* Initial radius of spiral, unit: mm  */
+	float  rad_add;              /* Radius increment  */
+	float  rotaxis_add;          /* Increment in the direction of the axis of rotation  */
+	unsigned int rot_direction;  /* Rotation direction, 0- clockwise, 1- counterclockwise  */
 }SpiralParam;
 
 #endif

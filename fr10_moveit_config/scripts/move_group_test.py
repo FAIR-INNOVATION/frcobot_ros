@@ -13,10 +13,10 @@ from moveit_commander.conversions import pose_to_list
 
 def all_close(goal, actual, tolerance):
     """
-    用以测试actual的值是否在goal对应值的公差范围内。
-    @param: goal       目标参数。浮点型列表、Pose 类型或 PoseStamped 类型消息
-    @param: actual     测试参数。浮点型列表、Pose 类型或 PoseStamped 类型消息
-    @param: tolerance  公差范围。浮点数
+    It is used to test whether the value of actual is within the tolerance range of the corresponding value of goal.
+    @param: goal       target parameter. List of floats, Pose type or PoseStamped type message
+    @param: actual     Test parameters. List of floats, Pose type or PoseStamped type message
+    @param: tolerance  tolerance range. floating point number
     @returns: bool
     """
     if type(goal) is list:
@@ -39,38 +39,38 @@ class MoveGroupTest(object):
     def __init__(self):
         super(MoveGroupTest, self).__init__()
 
-        # 初始化moveit_commander API和rospy节点
+        # Initialize moveit_commander API and rospy node
         moveit_commander.roscpp_initialize(sys.argv)
         rospy.init_node('move_group_test', anonymous=True)
 
-        # 初始化RobotCommander对象，提供诸如机器人运动学模型和机器人当前关节状态等信息，机器人与外界的接口。
+        # Initialize the RobotCommander object, provide information such as the robot kinematics model and the current joint state of the robot, and the interface between the robot and the outside world.
         robot = moveit_commander.RobotCommander()
 
-        # 初始化PlanningSceneInterface对象，提供一个机器人与周围世界的接口。
+        # Initialize the PlanningSceneInterface object to provide an interface between the robot and the surrounding world.
         scene = moveit_commander.PlanningSceneInterface()
 
-        # 初始化MoveGroupCommander对象。该对象是fr5机械臂规划组的接口，用于规划和执行机械臂运动。
-        group_name = "fr5_arm"
+        # Initialize the MoveGroupCommander object. This object is the interface of the fr10 manipulator planning group, which is used to plan and execute the manipulator motion.
+        group_name = "fr10_arm"
         move_group = moveit_commander.MoveGroupCommander(group_name)
 
-        # 创建一个用于在RViz中显示轨迹信息的ROS发布者
+        # Create a ROS publisher for displaying trajectory information in RViz
         display_trajectory_publisher = rospy.Publisher('/move_group/display_planned_path',
                                                        moveit_msgs.msg.DisplayTrajectory,
                                                        queue_size=20)                                                   
 
-        # 获取机器人的参考系名称
+        # Get the reference frame name of the robot
         planning_frame = move_group.get_planning_frame()
         print "============ Planning frame: %s" % planning_frame
 
-        # 获取当前规划组中机器人末端执行器连杆的名称
+        # Get the name of the robot's end effector linkage in the current planning group
         eef_link = move_group.get_end_effector_link()
         print "============ End effector link: %s" % eef_link
 
-        # 获取机器人所有规划组的名称，以数组形式输出
+        # Get the names of all planning groups of the robot and output them in an array
         group_names = robot.get_group_names()
         print "============ Available Planning Groups:", robot.get_group_names()
 
-        # 获取机器人当前状态
+        # Get the current state of the robot
         print "============ Printing robot state"
         print robot.get_current_state()
         print ""
@@ -86,10 +86,10 @@ class MoveGroupTest(object):
 
     def go_to_joint_state(self):
 
-        # 规划并执行到一个关节目标位置
+        # Plan and execute to a joint target position
         # ^^^^^^^^^^^^^^^^^^^^^^^^
-        # 法奥机器人初始位姿是一个奇异位姿，首先我们将其移动到一个更好的位置。
-        # 先从接口中获取当前机器人的各关节值，再修改部分关节的值
+        # The initial pose of Fao robot is a singular pose, first we move it to a better position.
+        # First obtain the joint values of the current robot from the interface, and then modify the values of some joints
         joint_goal = self.move_group.get_current_joint_values()
         print "============ Printing current joint values: ", joint_goal
         joint_goal[0] = 0
@@ -100,10 +100,10 @@ class MoveGroupTest(object):
         joint_goal[5] = 0
         print "============ Printing joint goal: ", joint_goal
 
-        # 运动到关节目标位置
+        # Move to joint target position
         self.move_group.go(joint_goal, wait=True)
         rospy.sleep(1)
-        # 调用停止指令，确保没有残留运动
+        # Invoke a stop instruction to make sure there is no residual motion
         self.move_group.stop()
 
         # For testing:
@@ -112,7 +112,7 @@ class MoveGroupTest(object):
 
     def go_to_pose_goal(self):
 
-        # 规划并执行到末端目标位姿
+        # Plan and execute to end goal pose
         # ^^^^^^^^^^^^^^^^^^^^^^^
         pose_goal = geometry_msgs.msg.Pose()
         pose_goal.orientation.w = 1.0
@@ -120,15 +120,15 @@ class MoveGroupTest(object):
         pose_goal.position.y = 0.1
         pose_goal.position.z = 0.4
 
-        # 设置目标位姿
+        # Set target pose
         self.move_group.set_pose_target(pose_goal)
 
-        # 规划并执行到目标位姿
+        # Plan and execute to target pose
         self.move_group.go(wait=True)
         rospy.sleep(1)
         self.move_group.stop()
 
-        # 清除目标位姿
+        # clear target pose
         self.move_group.clear_pose_targets()
 
         # For testing:
@@ -137,85 +137,85 @@ class MoveGroupTest(object):
 
     def plan_cartesian_path(self, scale=1.0):
 
-        # 规划并执行一条笛卡尔路径
+        # Plan and execute a Cartesian path
         # ^^^^^^^^^^^^^^^^^^^^
-        # 您可以通过指定末端执行器要通过的航路点列表来直接规划笛卡尔路径。
+        # You can plan a Cartesian path directly by specifying a list of waypoints for the end effector to pass through.
         waypoints = []
 
         wpose = self.move_group.get_current_pose().pose
-        wpose.position.z -= scale * 0.1  # 按z轴向下移动
-        wpose.position.y += scale * 0.2  # 按y轴向侧边移动
+        wpose.position.z -= scale * 0.1  # Move down the z axis
+        wpose.position.y += scale * 0.2  # Move sideways on the y axis
         waypoints.append(copy.deepcopy(wpose))
 
-        wpose.position.x += scale * 0.1  # 按x轴向前移动
+        wpose.position.x += scale * 0.1  # Move forward along the x-axis
         waypoints.append(copy.deepcopy(wpose))
 
-        wpose.position.y -= scale * 0.1  # 按y轴向侧边移动
+        wpose.position.y -= scale * 0.1  # Move sideways on the y axis
         waypoints.append(copy.deepcopy(wpose))
 
-        # 我们希望以1cm的分辨率插值笛卡尔路径，这就是为什么我们在笛卡尔转换中将0.01指定为eef_step的原因。 
-        # 通过将其设置为0.0，可以禁用跳转阈值，而忽略对关节空间中不可行跳转的检查。
+        # We want to interpolate the Cartesian path with a resolution of 1cm, that's why we specified 0.01 as eef_step in the Cartesian transformation.
+        # By setting it to 0.0, you can disable the jump threshold and ignore the check for jumps that are not feasible in joint space.
         (plan, fraction) = self.move_group.compute_cartesian_path(
             waypoints,   # waypoints to follow
             0.01,        # eef_step
             0.0)         # jump_threshold
 
-        # 当前只是规划路径，并没有让move_group去执行并移动机器人
+        # At present, it is only planning the path, and does not let move_group execute and move the robot
         return plan, fraction
 
     def display_trajectory(self, plan):
 
-        # 显示运动轨迹
+        # Show motion track
         # ^^^^^^^^^^
-        # DisplayTrajectory msg具有两个主要字段，trajectory_start和trajectory。
-        # 我们用当前的机器人状态填充trajectory_start，以复制任何AttachedCollisionObjects并将我们的计划添加到该轨迹。
+        # DisplayTrajectory msg has two main fields，trajectory_start和trajectory。
+        # We populate trajectory_start with the current robot state, to copy any AttachedCollisionObjects and add our plan to that trajectory.
         display_trajectory = moveit_msgs.msg.DisplayTrajectory()
         display_trajectory.trajectory_start = self.robot.get_current_state()
         display_trajectory.trajectory.append(plan)
-        # 发布到/move_group/display_planned_path话题
+        # Published to /move_group/display_planned_path topic
         self.display_trajectory_publisher.publish(display_trajectory)
 
     def execute_plan(self, plan):
 
-        # 执行规划的笛卡尔路径
+        # Cartesian path of execution plan
         # ^^^^^^^^^^^^^^^^
         self.move_group.execute(plan, wait=True)
 
-        # 注意：机器人的当前关节状态必须在RobotTrajectory中的第一个路径点的公差范围内，否则execute()将失败
+        # Note: The robot's current joint state must be within the tolerance of the first pathpoint in the RobotTrajectory, otherwise execute() will fail
 
 def main():
     try:
         print ""
         print "----------------------------------------------------------"
-        print "-------欢迎使用FR5机械臂基于ROS和MoveIt控制演示demo-------"
+        print "-------Welcome to the FR10 robotic arm control demo based on ROS and MoveIt-------"
         print "----------------------------------------------------------"
-        print "使用Ctrl+D退出该演示demo"
+        print "Exit the demo with Ctrl+D"
         print ""
-        print "============ 按下 `Enter` 键设置并初始化moveit_commander以开始演示demo ..."
+        print "============ Press `Enter` to set up and initialize moveit_commander to start the demo ..."
         raw_input()
         fr5demo = MoveGroupTest()
 
-        print "============ 按下 `Enter` 键移动到一个关节空间的目标位置 ..."
+        print "============ Press the `Enter` key to move to a target position in joint space ..."
         raw_input()
         fr5demo.go_to_joint_state()
 
-        print "============ 按下 `Enter` 键移动到一个笛卡尔空间的目标位置 ..."
+        print "============ Press the `Enter` key to move to a Cartesian space target position ..."
         raw_input()
         fr5demo.go_to_pose_goal()
 
-        print "============ 按下 `Enter` 键规划并演示一条笛卡尔空间路径 ..."
+        print "============ Press `Enter` to plan and demonstrate a path in Cartesian space ..."
         raw_input()
         cartesian_plan, fraction =  fr5demo.plan_cartesian_path()
 
-        print "============ 按下 `Enter` 键演示一个已经保存的笛卡尔空间路径  ..."
+        print "============ Press the `Enter` key to demonstrate a saved path in Cartesian space  ..."
         raw_input()
         fr5demo.display_trajectory(cartesian_plan)
 
-        print "============ 按下 `Enter` 键执行已保存的笛卡尔空间路径 ..."
+        print "============ Press the `Enter` key to execute the saved Cartesian space path ..."
         raw_input()
         fr5demo.execute_plan(cartesian_plan)
 
-        print "============ 演示完成!"
+        print "============ Demo complete!"
     except rospy.ROSInterruptException:
         return
     except KeyboardInterrupt:

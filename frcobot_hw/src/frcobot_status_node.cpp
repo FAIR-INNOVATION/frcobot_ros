@@ -6,7 +6,7 @@ FrRobotStatusCtrl::FrRobotStatusCtrl()
 
     frrobot_status_ = nh_.advertise<frcobot_hw::status>("frcobot_status", 10);
 
-    initTcp(); //初始化与机器人TCPIP连接
+    initTcp(); //Initialize the TCPIP connection with the robot
 }
 
 void FrRobotStatusCtrl::initTcp()
@@ -19,14 +19,14 @@ void FrRobotStatusCtrl::initTcp()
         
         ROS_INFO("%d", PORT);
     }
-    //通过struct sockaddr_in 结构设置服务器地址和监听端口；
+    //Set the server address and listening port through the struct sockaddr_in structure;
     memset(&serverSendAddr, 0, sizeof(serverSendAddr));
     serverSendAddr.sin_family = AF_INET;
     serverSendAddr.sin_addr.s_addr = inet_addr(robotIP);
     serverSendAddr.sin_port = htons(PORT);
     sendaddr_length = sizeof(serverSendAddr);
 
-    // 使用socket()，生成套接字文件描述符；
+    // Use socket() to generate a socket file descriptor;
     if ((confd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
     {
         ROS_INFO("socket() error");
@@ -47,7 +47,7 @@ void FrRobotStatusCtrl::initTcp()
 void FrRobotStatusCtrl::read()
 {
     recv_length = 0;
-    // 接收服务器的数据，recv()；
+    // Receive data from the server, recv();
     recv_length = recv(confd, recv_buf, sizeof(recv_buf), 0);
     if (recv_length <= 0)
     {

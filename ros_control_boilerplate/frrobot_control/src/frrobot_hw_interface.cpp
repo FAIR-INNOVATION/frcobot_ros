@@ -44,14 +44,14 @@ namespace frrobot_control
   FrRobotHWInterface::FrRobotHWInterface(ros::NodeHandle &nh, urdf::Model *urdf_model)
       : ros_control_boilerplate::GenericHWInterface(nh, urdf_model)
   {
-    // 通过struct sockaddr_in 结构设置服务器地址和监听端口；
+    // Set the server address and listening port through the struct sockaddr_in structure;
     memset(&serverSendAddr, 0, sizeof(serverSendAddr));
     serverSendAddr.sin_family = AF_INET;
     serverSendAddr.sin_addr.s_addr = inet_addr(SERVERIP);
     serverSendAddr.sin_port = htons(PORT_CMD);
     sendaddr_length = sizeof(serverSendAddr);
 
-    // 使用socket()，生成套接字文件描述符；
+    // Use socket() to generate a socket file descriptor;
     if ((confd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
     {
       ROS_INFO("socket() error");
@@ -86,7 +86,7 @@ namespace frrobot_control
 
     len = strlen(send_buf);
     sprintf(sendCmdLine, "/f/bIII123III376III%dIII%sIII/b/f", len, send_buf);
-    // 向服务器发送数据，send()；
+    // Send data to the server, send();
     int send_length = 0;
     send_length = send(confd, sendCmdLine, sizeof(sendCmdLine), 0);
     if (send_length < 0)
@@ -98,7 +98,7 @@ namespace frrobot_control
       // printf("write_sendmsg: %s;\n", sendCmdLine);
     }
     int recv_length = 0;
-    // 接收服务器的数据，recv()；
+    // Receive data from the server, recv();
     recvLine[MAXLINE] = '\0';
     recv_length = recv(confd, recvLine, sizeof(recvLine), 0);
     if (recv_length <= 0)

@@ -17,8 +17,8 @@ using namespace std;
 
 int main(int argc, char** argv)
 {
-    FRRobot robot;                 //实例化机器人对象
-    robot.RPC("192.168.58.2");     //与机器人控制器建立通信连接
+    FRRobot robot;                 //Instantiate the robot object
+    robot.RPC("192.168.58.2");     //Establish a communication connection with the robot controller
 
     char ip[64]="";
     char version[64] = "";

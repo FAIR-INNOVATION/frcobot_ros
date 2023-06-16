@@ -18,7 +18,7 @@ FrCobotRVSCon::FrCobotRVSCon() {
         nh.getParam("robot_ip", ROBOTIP);
         robotIP = (char *)ROBOTIP.c_str();
         ROS_INFO("FRcobot IP:%s", robotIP);
-        robot.RPC(robotIP);     //与机器人控制器建立通信连接
+        robot.RPC(robotIP);     //Establish a communication connection with the robot controller
     } 
     else
     {
@@ -44,7 +44,7 @@ FrCobotRVSCon::FrCobotRVSCon() {
     memset(&p1PostJoint, 0, sizeof(JointPos));
     memset(&p2PostJoint, 0, sizeof(JointPos));
 
-    // 初始化pHome点（拍照点）
+    // Initialize the pHome point (photograph point)
     memset(&pHomePose , 0, sizeof(DescPose));
     memset(&pHomeJoint, 0, sizeof(JointPos));
 
@@ -64,14 +64,14 @@ FrCobotRVSCon::FrCobotRVSCon() {
 
 void FrCobotRVSCon::rvsconnect()
 {
-    //通过struct sockaddr_in 结构设置服务器地址和监听端口；
+    //Set the server address and listening port through the struct sockaddr_in structure;
     memset(&rvsserverSendAddr, 0, sizeof(rvsserverSendAddr));
     rvsserverSendAddr.sin_family = AF_INET;
     rvsserverSendAddr.sin_addr.s_addr = inet_addr(rvsIP);
     rvsserverSendAddr.sin_port = htons(RVS_PORT);
     rvs_sendaddr_length = sizeof(rvsserverSendAddr);
 
-    // 使用socket()，生成套接字文件描述符；
+    // Use socket() to generate a socket file descriptor;
     if ((rvs_confd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
     {
         ROS_ERROR("socket() error");
@@ -99,7 +99,7 @@ void FrCobotRVSCon::rvsdisconnect() {
 
 void FrCobotRVSCon::writervs(const char* sendBuf) {
     int send_length = 0;
-    // 向服务器发送数据，send()；
+    // Send data to the server, send();
     send_length = send(rvs_confd, sendBuf, strlen(sendBuf)+1, 0);
     if (send_length < 0)
     {
@@ -113,7 +113,7 @@ void FrCobotRVSCon::writervs(const char* sendBuf) {
 
 void FrCobotRVSCon::readrvs(char *recvBuf) {
     int recv_length = 0;
-    // 接收服务器的数据，recv()；
+    // Receive data from the server, recv();
     recv_length = recv(rvs_confd, recvBuf, 100, 0);
     // printf("%d\n", recv_length);
     if (recv_length <= 0)
@@ -174,7 +174,7 @@ void FrCobotRVSCon::run() {
         // printf( "%s\n", result );
         result = strtok( NULL, delim );
     }
-    //  抓取点
+    //  grab point
     p1Pose.tran.x = res_split[2] * 1000;
     p1Pose.tran.y = res_split[3] * 1000;
     p1Pose.tran.z = res_split[4] * 1000;
@@ -183,7 +183,7 @@ void FrCobotRVSCon::run() {
     p1Pose.rpy.rz = res_split[7] / M_PI * 180;
     printf("p1Pose:%f,%f,%f,%f,%f,%f\n",p1Pose.tran.x,p1Pose.tran.y,p1Pose.tran.z,p1Pose.rpy.rx,p1Pose.rpy.ry,p1Pose.rpy.rz);
 
-    //  放置点
+    //  placement point
     p2Pose.tran.x = res_split[8] * 1000;
     p2Pose.tran.y = res_split[9] * 1000;
     p2Pose.tran.z = res_split[10] * 1000;
