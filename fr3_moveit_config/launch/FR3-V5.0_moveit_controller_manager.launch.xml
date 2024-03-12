@@ -10,5 +10,5 @@
   <param name="use_controller_manager" value="$(arg use_controller_manager)" />
 
   <!-- loads ros_controllers to the param server -->
-  <rosparam file="$(find fr3_moveit_config)/config/real_controllers.yaml"/>
+  <rosparam file="$(find fr3_moveit_config)/config/ros_controllers.yaml"/>
 </launch>
