@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <launch>
   <arg name="paused" default="false"/>
-  <arg name="gazebo_gui" default="false"/>
+  <arg name="gazebo_gui" default="true"/>
   <arg name="urdf_path" default="$(find frcobot_description)/urdf/fr3_gazebo.urdf"/>
 
   <!-- startup simulated world -->
