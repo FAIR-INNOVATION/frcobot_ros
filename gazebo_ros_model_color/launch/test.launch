@@ -1,0 +1,20 @@
+<launch>
+  <!-- We resume the logic in empty_world.launch, changing only the name of the world to be launched -->
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="world_name" value="$(find gazebo_ros_model_color)/worlds/hello.world"/>
+    <!-- more default parameters can be changed here -->
+    <!--arg name="verbose" value="true"/-->
+    <!--arg name="debug" value="true"/-->
+  </include>
+
+  <!-- Convert an xacro and put on parameter server -->
+  <param name="robot_description" command="$(find xacro)/xacro --inorder $(find gazebo_ros_model_color)/urdf/box.gazebo.urdf.xacro" />
+
+  <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher">
+    <param name="publish_frequency" type="double" value="30.0" />
+  </node>
+
+  <!-- Spawn a robot into Gazebo -->
+  <node name="spawn_my_box" pkg="gazebo_ros" type="spawn_model" args="-param robot_description -urdf -model my_box" />
+
+</launch>

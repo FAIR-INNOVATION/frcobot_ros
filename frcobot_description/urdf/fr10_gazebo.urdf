@@ -305,4 +305,60 @@
             <robotNamespace>/</robotNamespace>
         </plugin>
     </gazebo>
+
+
+
+
+
+
+
+    <link name="realsense_link">
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+    </link>
+
+    <joint name="realsense_joint" type="fixed">
+        <parent link="wrist3_Link"/>
+        <child link="realsense_link"/>
+        <origin xyz="0 0.3 0" rpy="0 0 1.57"/>
+    </joint>
+
+    <!-- Include the sensor definition using the <gazebo> tag -->
+    <gazebo reference="realsense_link">
+        <sensor name="depth_camera" type="depth">
+        <update_rate>30</update_rate>
+        <camera>
+            <horizontal_fov>1.02974</horizontal_fov>
+            <image>
+            <format>R8G8B8</format>
+            <width>640</width>
+            <height>480</height>
+            </image>
+            <clip>
+            <near>0.5</near>
+            <far>18</far>
+            </clip>
+        </camera>
+        <plugin filename="libgazebo_ros_openni_kinect.so" name="camera_controller">
+            <cameraName>camera</cameraName>
+            <alwaysOn>true</alwaysOn>
+            <updateRate>20</updateRate>
+            <pointCloudCutoff>0.2</pointCloudCutoff>
+            <pointCloudCutoffMax>20</pointCloudCutoffMax>
+            <imageTopicName>rgb/image_raw</imageTopicName>
+            <cameraInfoTopicName>rgb/camera_info</cameraInfoTopicName>
+            <depthImageTopicName>depth/image_raw</depthImageTopicName>
+            <depthImageCameraInfoTopicName>depth/camera_info</depthImageCameraInfoTopicName>
+            <pointCloudTopicName>depth/points</pointCloudTopicName>
+            <frameName>camera_link</frameName>
+            <distortion_k1>0.0</distortion_k1>
+            <distortion_k2>0.0</distortion_k2>
+            <distortion_k3>0.0</distortion_k3>
+            <distortion_t1>0.0</distortion_t1>
+            <distortion_t2>0.0</distortion_t2>
+        </plugin>
+        </sensor>
+
+    </gazebo>
+
+
 </robot>

@@ -58,7 +58,7 @@
 
   <!-- Run Rviz and load the default config to see the state of the move_group node -->
   <include file="$(find fr3_moveit_config)/launch/moveit_rviz.launch">
-    <arg name="rviz_config" value="$(find fr3_moveit_config)/launch/moveit.rviz"/>
+    <arg name="rviz_config" value="$(find fr3_moveit_config)/launch/moveit_camera.rviz"/>
     <arg name="debug" value="$(arg debug)"/>
   </include>
 
@@ -66,5 +66,9 @@
   <include file="$(find fr3_moveit_config)/launch/default_warehouse_db.launch" if="$(arg db)">
     <arg name="moveit_warehouse_database_path" value="$(arg db_path)"/>
   </include>
+
+  <!-- Spawn color boxes -->
+  <!-- <include file="$(find gazebo_ros_model_color)/launch/spawn.launch">
+  </include> -->
 
 </launch>

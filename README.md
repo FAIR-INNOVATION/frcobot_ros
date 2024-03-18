@@ -86,3 +86,9 @@ roslaunch fr3_moveit_config demo_hardware.launch
 roslaunch fr10_moveit_config demo_simulation.launch
 roslaunch fr10_moveit_config demo_hardware.launch 
 ```
+
+## Spwan color boxes
+
+```bash
+roslaunch gazebo_ros_model_color spawn.launch
+```

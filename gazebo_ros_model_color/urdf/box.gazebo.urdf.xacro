@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<robot name="color_box">
+  <link name="world"/>
+
+  <joint name="world_box_joint" type="fixed">
+    <parent link="world"/>
+    <child link="my_color_box"/>
+  </joint>
+
+
+  <link name="my_color_box">
+    <inertial>
+      <origin xyz="2 0 0" />
+      <mass value="1.0" />
+    <inertia  ixx="1.0" ixy="0.0"  ixz="0.0"  iyy="100.0"  iyz="0.0"  izz="1.0" />
+    </inertial>
+    <visual>
+      <origin xyz="2 0 1"/>
+      <geometry>
+        <box size="0.5 0.5 0.5" />
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="2 0 1"/>
+      <geometry>
+        <box size="0.5 0.5 0.5" />
+      </geometry>
+    </collision>
+  </link>
+
+  <gazebo reference='my_color_box'>
+    <visual>
+      <plugin name="gazebo_ros_model_color" filename="libgazebo_ros_model_color.so">
+        <robotNamespace>/</robotNamespace>
+        <serviceName>/my_box_color</serviceName>
+        <color>0.5 0.8 1.0 1.0</color>
+      </plugin>
+    </visual>
+  </gazebo>
+
+</robot>
