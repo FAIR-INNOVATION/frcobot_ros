@@ -64,3 +64,25 @@ rosdep update
 rosdep install --from-paths src --ignore-src -y
 catkin make
 ```
+
+
+## Gazebo simulation
+
+```bash
+roslaunch fr3_moveit_config demo_gazebo.launch 
+```
+```bash
+roslaunch fr10_moveit_config demo_gazebo.launch 
+```
+
+## Real robot simulation
+
+```bash
+roslaunch fr3_moveit_config demo_simulation.launch
+roslaunch fr3_moveit_config demo_hardware.launch 
+```
+
+```bash
+roslaunch fr10_moveit_config demo_simulation.launch
+roslaunch fr10_moveit_config demo_hardware.launch 
+```

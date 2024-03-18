@@ -60,7 +60,8 @@
   </include>
 
   <!-- start frrobot control -->
-  <!-- <include file="$(find ros_control_boilerplate)/frrobot_control/launch/fr3_simulation.launch" launch-prefix="xterm -e">
-  </include> -->
+  <include file="$(find ros_control_boilerplate)/frrobot_control/launch/fr3_simulation.launch" >
+    launch-prefix="xterm -e"
+  </include>
 
 </launch>
