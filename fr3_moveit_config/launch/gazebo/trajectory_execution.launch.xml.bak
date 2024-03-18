@@ -15,6 +15,6 @@
 
   <!-- Load the robot specific controller manager; this sets the moveit_controller_manager ROS parameter -->
   <arg name="moveit_controller_manager" default="FR3-V5.0" />
-  <include file="$(find fr3_moveit_config)/launch/$(arg moveit_controller_manager)_moveit_controller_manager.launch.xml" />
+  <include file="$(find fr3_moveit_config)/launch/gazebo/$(arg moveit_controller_manager)_moveit_controller_manager.launch.xml" />
 
 </launch>

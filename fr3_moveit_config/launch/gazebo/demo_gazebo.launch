@@ -25,14 +25,14 @@
   <arg name="urdf_path" default="$(find frcobot_description)/urdf/fr3_gazebo.urdf"/>
 
   <!-- launch the gazebo simulator and spawn the robot -->
-  <include file="$(find fr3_moveit_config)/launch/gazebo.launch" >
+  <include file="$(find fr3_moveit_config)/launch/gazebo/gazebo.launch" >
     <arg name="paused" value="$(arg paused)"/>
     <arg name="gazebo_gui" value="$(arg gazebo_gui)"/>
     <arg name="urdf_path" value="$(arg urdf_path)"/>
   </include>
 
   <!-- Load the URDF, SRDF and other .yaml configuration files on the param server -->
-  <!-- <include file="$(find fr3_moveit_config)/launch/planning_context.launch">
+  <!-- <include file="$(find fr3_moveit_config)/launch/gazebo/planning_context.launch">
     <arg name="load_robot_description" value="false"/>
   </include> -->
 
@@ -46,7 +46,7 @@
   </node> -->
 
   <!-- Run the main MoveIt! executable without trajectory execution (we do not have controllers configured by default) -->
-  <include file="$(find fr3_moveit_config)/launch/move_group.launch">
+  <include file="$(find fr3_moveit_config)/launch/gazebo/move_group.launch">
     <arg name="allow_trajectory_execution" value="true"/>
     <arg name="fake_execution" value="false"/>
     <arg name="info" value="true"/>

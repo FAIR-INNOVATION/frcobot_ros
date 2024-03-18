@@ -5,6 +5,6 @@
 
   <arg name="pipeline" default="ompl" />
 
-  <include file="$(find fr3_moveit_config)/launch/$(arg pipeline)_planning_pipeline.launch.xml" />
+  <include file="$(find fr3_moveit_config)/launch/gazebo/$(arg pipeline)_planning_pipeline.launch.xml" />
 
 </launch>

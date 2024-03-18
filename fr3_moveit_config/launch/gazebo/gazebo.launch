@@ -2,7 +2,7 @@
 <launch>
   <arg name="paused" default="false"/>
   <arg name="gazebo_gui" default="true"/>
-  <arg name="urdf_path" default="$(find frcobot_description)/urdf/fr10_gazebo.urdf"/>
+  <arg name="urdf_path" default="$(find frcobot_description)/urdf/fr3_gazebo.urdf"/>
 
   <!-- startup simulated world -->
   <include file="$(find gazebo_ros)/launch/empty_world.launch">
@@ -18,6 +18,18 @@
   <node name="spawn_gazebo_model" pkg="gazebo_ros" type="spawn_model" args="-urdf -param robot_description -model robot -x 0 -y 0 -z 0"
     respawn="false" output="screen" />
 
-  <include file="$(find fr10_moveit_config)/launch/ros_controllers.launch"/>
+  <!-- <include file="$(find fr3_moveit_config)/launch/gazebo/ros_controllers.launch"/> -->
+
+  <!-- Load joint controller configurations from YAML file to parameter server -->
+  <rosparam file="$(find fr3_moveit_config)/config/ros_controllers.yaml" command="load"/>
+
+  <!-- Load the controllers -->
+  <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
+    output="screen" args="joint_state_controller eff_joint_traj_controller"/>
+
+  <!-- convert joint states to TF transforms for rviz, etc -->
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"
+	respawn="false" output="screen">
+  </node>
 
 </launch>
