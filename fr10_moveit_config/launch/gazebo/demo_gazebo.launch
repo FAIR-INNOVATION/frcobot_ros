@@ -67,4 +67,8 @@
     <arg name="moveit_warehouse_database_path" value="$(arg db_path)"/>
   </include>
 
+  <arg name="spawn_box" default="false"/>
+  <include file="$(find gazebo_ros_model_color)/launch/spawn.launch" if="$(arg spawn_box)">
+  </include>
+
 </launch>

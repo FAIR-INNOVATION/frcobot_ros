@@ -10,7 +10,7 @@
     </joint>
     <link name="base_link">
         
-<inertial>
+        <inertial>
             <origin xyz="-0.00037779 0.035824 0.00035123" rpy="0 0 0" />
             <mass value="8.73773" />
             <inertia ixx="0.0026261" ixy="-8.5597E-06" ixz="-1.1085E-05" iyy="0.0044464" iyz="8.0719E-06" izz="0.0026257" />
@@ -34,7 +34,7 @@
     </link>
     <link name="shoulder_Link">
         
-<inertial>
+        <inertial>
             <origin xyz="-1.0816E-07 -0.13473 -0.0047771" rpy="0 0 0" />
             <mass value="3.8977" />
             <inertia ixx="0.018741" ixy="5.0033E-08" ixz="9.2604E-08" iyy="0.012373" iyz="1.6387E-05" izz="0.018267" />
@@ -50,14 +50,14 @@
             </material>
         </visual>
         <collision>
-            <origin xyz="0 0 0" rpy="0 0 0" />
+            <origin xyz="0.004 -0.045 -0.005" rpy="-1.57 0 0" />
             <geometry>
                 <mesh filename="package://frcobot_description/meshes/fr10/collision/shoulder_Link.STL" />
             </geometry>
         </collision>
     </link>
     <joint name="j1" type="revolute">
-        <origin xyz="0 0 0.145908" rpy="-1.5708 3.14159 3.14159" />
+        <origin xyz="0 0 0.045908" rpy="-1.5708 3.14159 3.14159" />
         <parent link="base_link" />
         <child link="shoulder_Link" />
         <axis xyz="0 1 0" />
@@ -68,7 +68,7 @@
     </joint>
     <link name="upperarm_Link">
         
-<inertial>
+        <inertial>
             <origin xyz="-1.2243E-07 0.28754 -0.13462" rpy="0 0 0" />
             <mass value="11.568" />
             <inertia ixx="0.18366" ixy="-1.1858E-08" ixz="8.4371E-08" iyy="0.03371" iyz="-8.597E-06" izz="0.17531" />
@@ -84,7 +84,7 @@
             </material>
         </visual>
         <collision>
-            <origin xyz="0 0 0" rpy="0 0 0" />
+            <origin xyz="0 0 0.051" rpy="0 0 0" />
             <geometry>
                 <mesh filename="package://frcobot_description/meshes/fr10/collision/upperarm_Link.STL" />
             </geometry>
@@ -102,7 +102,7 @@
     </joint>
     <link name="forearm_Link">
         
-<inertial>
+        <inertial>
             <origin xyz="-7.3696E-07 0.42863 0.0061272" rpy="0 0 0" />
             <mass value="1.5774" />
             <inertia ixx="0.012832" ixy="-7.5164E-09" ixz="2.0819E-10" iyy="0.0031275" iyz="-8.569E-05" izz="0.01198" />
@@ -118,7 +118,7 @@
             </material>
         </visual>
         <collision>
-            <origin xyz="0 0 0" rpy="0 0 0" />
+            <origin xyz="0 0 -0.01" rpy="0 0 -1.57" />
             <geometry>
                 <mesh filename="package://frcobot_description/meshes/fr10/collision/forearm_Link.STL" />
             </geometry>
@@ -136,7 +136,7 @@
     </joint>
     <link name="wrist1_Link">
         
-<inertial>
+        <inertial>
             <origin xyz="1.119E-07 -0.0030015 0.074852" rpy="0 0 0" />
             <mass value="1.1074" />
             <inertia ixx="0.0019683" ixy="2.6898E-08" ixz="-6.9297E-09" iyy="0.0011013" iyz="3.8797E-06" izz="0.0020283" />
@@ -144,9 +144,6 @@
 
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0" />
-            <!-- <origin
-        xyz="0 0.268 -0.211"
-        rpy="3.14159 0 0" /> -->
             <geometry>
                 <mesh filename="package://frcobot_description/meshes/fr10/visual/wrist1_Link.DAE" />
             </geometry>
@@ -155,7 +152,7 @@
             </material>
         </visual>
         <collision>
-            <origin xyz="0 0 0" rpy="0 0 0" />
+            <origin xyz="0 0 -0.06" rpy="0 0 -1.57" />
             <geometry>
                 <mesh filename="package://frcobot_description/meshes/fr10/collision/wrist1_Link.STL" />
             </geometry>
@@ -173,7 +170,7 @@
     </joint>
     <link name="wrist2_Link">
         
-<inertial>
+        <inertial>
             <origin xyz="-0.058347 0.0037159 -0.0044844" rpy="0 0 0" />
             <mass value="0.89805" />
             <inertia ixx="0.0018083" ixy="3.8829E-06" ixz="-2.3592E-06" iyy="0.00097125" iyz="3.0557E-07" izz="0.0018386" />
@@ -189,11 +186,11 @@
             </material>
         </visual>
         <collision>
-            <origin xyz="0 0 0" rpy="0 0 0" />
+            <origin xyz="-0.114 0 -0.008" rpy="0 -1.4981 3.14" />
             <geometry>
-                <mesh filename="package://frcobot_description/meshes/fr10/collision/wrist2_Link.STL" />
+                <mesh filename="package://frcobot_description/meshes/fr10/collision/wrist2_Link_correct.stl" />
             </geometry>
-        </collision>
+        </collision>    
     </link>
     <joint name="j5" type="revolute">
         <origin xyz="0 0.174 0.091" rpy="-1.5708 0 1.4981" />
@@ -207,7 +204,7 @@
     </joint>
     <link name="wrist3_Link">
         
-<inertial>
+        <inertial>
             <origin xyz="-1.8098E-05 0.022586 -2.1629E-05" rpy="0 0 0" />
             <mass value="0.24186" />
             <inertia ixx="0.00015143" ixy="9.9865E-08" ixz="7.787E-08" iyy="0.00024022" iyz="6.6716E-08" izz="0.00015134" />
@@ -223,9 +220,9 @@
             </material>
         </visual>
         <collision>
-            <origin xyz="0 0 0" rpy="0 0 0" />
+            <origin xyz="0 0 0" rpy="-1.57 0 0" />
             <geometry>
-                <mesh filename="package://frcobot_description/meshes/fr10/collision/wrist3_Link.STL" />
+                <mesh filename="package://frcobot_description/meshes/fr10/collision/wrist3_Link_correct.stl" />
             </geometry>
         </collision>
     </link>
@@ -236,7 +233,7 @@
         <axis xyz="0 1 0" />
         <limit lower="-3.0543" upper="3.0543" effort="28" velocity="0.2" />
         <calibration rising="0" falling="0" />
-        <dynamics damping="0.05" friction="0.05" />
+        <dynamics damping="0.05" friction="0.5" />
         <safety_controller soft_upper_limit="3.0543261" soft_lower_limit="-3.0543261" k_position="100" k_velocity="40" />
     </joint>
     
@@ -314,6 +311,12 @@
 
     <link name="realsense_link">
         <origin xyz="0 0 0" rpy="0 0 0"/>
+
+        <inertial>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <mass value="0.14186" />
+            <inertia ixx="0.00015143" ixy="9.9865E-08" ixz="7.787E-08" iyy="0.00024022" iyz="6.6716E-08" izz="0.00015134" />
+        </inertial>
     </link>
 
     <joint name="realsense_joint" type="fixed">

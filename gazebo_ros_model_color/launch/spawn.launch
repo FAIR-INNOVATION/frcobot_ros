@@ -1,10 +1,10 @@
 <launch>
 
   <!-- Convert an xacro and put on parameter server -->
-  <param name="robot_description" command="$(find xacro)/xacro --inorder $(find gazebo_ros_model_color)/urdf/box.gazebo.urdf.xacro" />
+  <param name="robot_description_box" command="$(find xacro)/xacro --inorder $(find gazebo_ros_model_color)/urdf/box.gazebo.urdf.xacro" />
   
   <arg name="node_start_delay" default="1.0" />  
   <!-- Spawn a robot into Gazebo -->
-  <node name="spawn_my_box" pkg="gazebo_ros" type="spawn_model" args="-param robot_description -urdf -model my_box"  launch-prefix="bash -c 'sleep $(arg node_start_delay); $0 $@' "/>
+  <node name="spawn_my_box" pkg="gazebo_ros" type="spawn_model" args="-param robot_description_box -urdf -model my_box"  launch-prefix="bash -c 'sleep $(arg node_start_delay); $0 $@' "/>
 
 </launch>

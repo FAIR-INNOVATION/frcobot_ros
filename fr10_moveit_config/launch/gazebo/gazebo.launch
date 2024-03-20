@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <launch>
-  <arg name="paused" default="false"/>
+  <arg name="paused" default="true"/>
   <arg name="gazebo_gui" default="true"/>
   <arg name="urdf_path" default="$(find frcobot_description)/urdf/fr10_gazebo.urdf"/>
 

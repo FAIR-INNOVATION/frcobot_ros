@@ -82,9 +82,7 @@
       </material>
     </visual>
     <collision>
-      <origin
-        xyz="0 0 0"
-        rpy="0 0 0" />
+      <origin xyz="0.004 -0.045 -0.005" rpy="-1.57 0 0" />
       <geometry>
         <mesh
           filename="package://frcobot_description/meshes/fr10/collision/shoulder_Link.STL" />
@@ -151,9 +149,7 @@
       </material>
     </visual>
     <collision>
-      <origin
-        xyz="0 0 0"
-        rpy="0 0 0" />
+      <origin xyz="0 0 0.051" rpy="0 0 0" />
       <geometry>
         <mesh
           filename="package://frcobot_description/meshes/fr10/collision/upperarm_Link.STL" />
@@ -220,9 +216,7 @@
       </material>
     </visual>
     <collision>
-      <origin
-        xyz="0 0 0"
-        rpy="0 0 0" />
+      <origin xyz="0 0 -0.01" rpy="0 0 -1.57" />
       <geometry>
         <mesh
           filename="package://frcobot_description/meshes/fr10/collision/forearm_Link.STL" />
@@ -292,9 +286,7 @@
       </material>
     </visual>
     <collision>
-      <origin
-        xyz="0 0 0"
-        rpy="0 0 0" />
+      <origin xyz="0 0 -0.06" rpy="0 0 -1.57" />
       <geometry>
         <mesh
           filename="package://frcobot_description/meshes/fr10/collision/wrist1_Link.STL" />
@@ -361,12 +353,9 @@
       </material>
     </visual>
     <collision>
-      <origin
-        xyz="0 0 0"
-        rpy="0 0 0" />
+      <origin xyz="-0.114 0 -0.008" rpy="0 -1.4981 3.14" />
       <geometry>
-        <mesh
-          filename="package://frcobot_description/meshes/fr10/collision/wrist2_Link.STL" />
+          <mesh filename="package://frcobot_description/meshes/fr10/collision/wrist2_Link_correct.stl" />
       </geometry>
     </collision>
   </link>
@@ -430,12 +419,9 @@
       </material>
     </visual>
     <collision>
-      <origin
-        xyz="0 0 0"
-        rpy="0 0 0" />
+      <origin xyz="0 0 0" rpy="-1.57 0 0" />
       <geometry>
-        <mesh
-          filename="package://frcobot_description/meshes/fr10/collision/wrist3_Link.STL" />
+          <mesh filename="package://frcobot_description/meshes/fr10/collision/wrist3_Link_correct.stl" />
       </geometry>
     </collision>
   </link>

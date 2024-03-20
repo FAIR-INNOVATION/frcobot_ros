@@ -2,40 +2,150 @@
 <robot name="color_box">
   <link name="world"/>
 
-  <joint name="world_box_joint" type="fixed">
-    <parent link="world"/>
-    <child link="my_color_box"/>
-  </joint>
-
-
-  <link name="my_color_box">
+  <link name="my_color_box1">
     <inertial>
-      <origin xyz="2 0 0" />
+      <origin xyz="0 0 0" />
       <mass value="1.0" />
     <inertia  ixx="1.0" ixy="0.0"  ixz="0.0"  iyy="100.0"  iyz="0.0"  izz="1.0" />
     </inertial>
     <visual>
-      <origin xyz="2 0 1"/>
+      <origin xyz="0 0 0"/>
       <geometry>
         <box size="0.5 0.5 0.5" />
       </geometry>
     </visual>
     <collision>
-      <origin xyz="2 0 1"/>
+      <origin xyz="0 0 0"/>
       <geometry>
         <box size="0.5 0.5 0.5" />
       </geometry>
     </collision>
   </link>
 
-  <gazebo reference='my_color_box'>
+  <link name="my_color_box2">
+    <inertial>
+      <origin xyz="0 0 0" />
+      <mass value="1.0" />
+    <inertia  ixx="1.0" ixy="0.0"  ixz="0.0"  iyy="100.0"  iyz="0.0"  izz="1.0" />
+    </inertial>
     <visual>
-      <plugin name="gazebo_ros_model_color" filename="libgazebo_ros_model_color.so">
-        <robotNamespace>/</robotNamespace>
-        <serviceName>/my_box_color</serviceName>
-        <color>0.5 0.8 1.0 1.0</color>
-      </plugin>
+      <origin xyz="0 0 0"/>
+      <geometry>
+        <box size="0.5 0.5 0.5" />
+      </geometry>
     </visual>
+    <collision>
+      <origin xyz="0 0 0"/>
+      <geometry>
+        <box size="0.5 0.5 0.5" />
+      </geometry>
+    </collision>
+  </link>
+
+  <link name="my_color_box3">
+    <inertial>
+      <origin xyz="0 0 0" />
+      <mass value="1.0" />
+    <inertia  ixx="1.0" ixy="0.0"  ixz="0.0"  iyy="100.0"  iyz="0.0"  izz="1.0" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 1"/>
+      <geometry>
+        <box size="0.5 0.5 0.5" />
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0"/>
+      <geometry>
+        <box size="0.5 0.5 0.5" />
+      </geometry>
+    </collision>
+  </link>
+
+  <link name="my_color_box4">
+    <inertial>
+      <origin xyz="2 0 0" />
+      <mass value="1.0" />
+    <inertia  ixx="1.0" ixy="0.0"  ixz="0.0"  iyy="100.0"  iyz="0.0"  izz="1.0" />
+    </inertial>
+    <visual>
+      <origin xyz="2 0 0"/>
+      <geometry>
+        <box size="0.5 0.5 0.5" />
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="2 0 0"/>
+      <geometry>
+        <box size="0.5 0.5 0.5" />
+      </geometry>
+    </collision>
+  </link>
+
+  <link name="my_color_box5">
+    <inertial>
+      <origin xyz="0 0 0" />
+      <mass value="1.0" />
+    <inertia  ixx="1.0" ixy="0.0"  ixz="0.0"  iyy="100.0"  iyz="0.0"  izz="1.0" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0"/>
+      <geometry>
+        <box size="0.5 0.5 0.5" />
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0"/>
+      <geometry>
+        <box size="0.5 0.5 0.5" />
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="world_box_joint1" type="fixed">
+    <origin xyz="3 0 1" />
+    <parent link="world"/>
+    <child link="my_color_box1"/>
+  </joint>
+  <joint name="world_box_joint2" type="fixed">
+    <origin xyz="-2 0 1" />
+    <parent link="world"/>
+    <child link="my_color_box2"/>
+  </joint>
+  <joint name="world_box_joint3" type="fixed">
+    <origin xyz="-2 -2 1" />
+    <parent link="world"/>
+    <child link="my_color_box3"/>
+  </joint>
+  <joint name="world_box_joint4" type="fixed">
+    <origin xyz="2 2 1" />
+    <parent link="world"/>
+    <child link="my_color_box4"/>
+  </joint>
+  <joint name="world_box_joint5" type="fixed">
+    <origin xyz="0 -2 1"/>
+    <parent link="world"/>
+    <child link="my_color_box5"/>
+  </joint>
+
+  <gazebo reference='my_color_box1'>
+    <material value="Gazebo/Blue"/>
+  </gazebo>
+
+  <gazebo reference='my_color_box2'>
+    <material value="Gazebo/Red"/>
+  </gazebo>
+
+  <gazebo reference='my_color_box3'>
+    <material value="Gazebo/Green"/>
+  </gazebo>
+
+  <gazebo reference='my_color_box4'>
+    <material value="Gazebo/Grey"/>
+  </gazebo>
+
+  <gazebo reference='my_color_box5'>
+    <material value="Gazebo/Yellow"/>
   </gazebo>
 
 </robot>

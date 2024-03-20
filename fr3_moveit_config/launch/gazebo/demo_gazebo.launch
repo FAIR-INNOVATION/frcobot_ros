@@ -68,7 +68,8 @@
   </include>
 
   <!-- Spawn color boxes -->
-  <!-- <include file="$(find gazebo_ros_model_color)/launch/spawn.launch">
-  </include> -->
+  <arg name="spawn_box" default="false"/>
+  <include file="$(find gazebo_ros_model_color)/launch/spawn.launch" if="$(arg spawn_box)">
+  </include>
 
 </launch>

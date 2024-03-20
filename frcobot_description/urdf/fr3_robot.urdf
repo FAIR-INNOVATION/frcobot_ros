@@ -155,9 +155,7 @@
       </material>
     </visual>
     <collision>
-      <origin
-        xyz="0 0 0"
-        rpy="0 0 0" />
+      <origin xyz="0 0 0" rpy="3.14 0 0" />
       <geometry>
         <mesh
           filename="package://frcobot_description/meshes/fr3/collision/upperarm_Link.STL" />
@@ -224,9 +222,7 @@
       </material>
     </visual>
     <collision>
-      <origin
-        xyz="0 0 0"
-        rpy="0 0 0" />
+      <origin xyz="0 0 0" rpy="3.14 0 0" />
       <geometry>
         <mesh
           filename="package://frcobot_description/meshes/fr3/collision/forearm_Link.STL" />
@@ -293,9 +289,7 @@
       </material>
     </visual>
     <collision>
-      <origin
-        xyz="0 0 0"
-        rpy="0 0 0" />
+      <origin xyz="0.0085 0 0" rpy="0 3.14 0" />
       <geometry>
         <mesh
           filename="package://frcobot_description/meshes/fr3/collision/wrist1_Link.STL" />
@@ -362,9 +356,7 @@
       </material>
     </visual>
     <collision>
-      <origin
-        xyz="0 0 0"
-        rpy="0 0 0" />
+      <origin xyz="-0.097 0 0" rpy="0 3.14 0" />
       <geometry>
         <mesh
           filename="package://frcobot_description/meshes/fr3/collision/wrist2_Link.STL" />
