@@ -71,4 +71,7 @@
   <include file="$(find gazebo_ros_model_color)/launch/spawn.launch" if="$(arg spawn_box)">
   </include>
 
+  <!-- 210927 YSW: Added gripper gazebo publisher -->                                           
+  <node name="gripper_gazebo_pub" pkg="fr10_moveit_config" type="gazebo_rh_pub"/>
+
 </launch>

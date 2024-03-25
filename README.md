@@ -92,3 +92,18 @@ roslaunch fr10_moveit_config demo_hardware.launch
 ```bash
 roslaunch gazebo_ros_model_color spawn.launch
 ```
+
+## How to use gripper?
+
+```bash
+# - gripper open
+rostopic pub -1 /rh_p12_rn_position/command std_msgs/Float64 "data: 0.0"
+
+# - gripper close
+rostopic pub -1 /rh_p12_rn_position/command std_msgs/Float64 "data: 0.68"
+```
+
+You can use python to execute the command
+```bash
+rosrun fr10_moveit_config gripper_control.py
+```

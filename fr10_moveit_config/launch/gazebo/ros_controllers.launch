@@ -8,11 +8,9 @@
   <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
     output="screen" args="joint_state_controller fr10_arm_controller 
                                               rh_p12_rn_position
-                                              rh_r2_position"/>
+                                              rh_l1_position"/>
 
-<!-- rh_p12_rn_position
-rh_r2_position
-rh_l1_position
-rh_l2_position -->
+                                              <!-- rh_r2_position
+                                              rh_l2_position -->
 
 </launch>
