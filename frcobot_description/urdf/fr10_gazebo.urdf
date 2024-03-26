@@ -367,14 +367,14 @@
         <collision>
         <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
-            <mesh filename="package://husky_ur3_gazebo/meshes/base.stl" scale="0.001 0.001 0.001"/>
+            <mesh filename="package://frcobot_description/meshes/gripper//base.stl" scale="0.001 0.001 0.001"/>
         </geometry>
         </collision>
 
         <visual>
         <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
-            <mesh filename="package://husky_ur3_gazebo/meshes/base.stl" scale="0.001 0.001 0.001"/>
+            <mesh filename="package://frcobot_description/meshes/gripper//base.stl" scale="0.001 0.001 0.001"/>
         </geometry>
         <material name="grey"/>
         </visual>
@@ -414,14 +414,14 @@
         <!-- <collision>
         <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
-            <mesh filename="package://husky_ur3_gazebo/meshes/r1.stl" scale="0.001 0.001 0.001"/>
+            <mesh filename="package://frcobot_description/meshes/gripper//r1.stl" scale="0.001 0.001 0.001"/>
         </geometry>
         </collision> -->
 
         <visual>
         <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
-            <mesh filename="package://husky_ur3_gazebo/meshes/r1.stl" scale="0.001 0.001 0.001"/>
+            <mesh filename="package://frcobot_description/meshes/gripper//r1.stl" scale="0.001 0.001 0.001"/>
         </geometry>
         <material name="grey"/>
         </visual>
@@ -460,14 +460,14 @@
         <collision>
         <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
-            <mesh filename="package://husky_ur3_gazebo/meshes/r2.stl" scale="0.001 0.001 0.001"/>
+            <mesh filename="package://frcobot_description/meshes/gripper//r2.stl" scale="0.001 0.001 0.001"/>
         </geometry>
         </collision>
 
         <visual>
         <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
-            <mesh filename="package://husky_ur3_gazebo/meshes/r2.stl" scale="0.001 0.001 0.001"/>
+            <mesh filename="package://frcobot_description/meshes/gripper//r2.stl" scale="0.001 0.001 0.001"/>
         </geometry>
         <material name="grey"/>
         </visual>
@@ -506,14 +506,14 @@
         <!-- <collision>
         <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
-            <mesh filename="package://husky_ur3_gazebo/meshes/l1.stl" scale="0.001 0.001 0.001"/>
+            <mesh filename="package://frcobot_description/meshes/gripper//l1.stl" scale="0.001 0.001 0.001"/>
         </geometry>
         </collision> -->
 
         <visual>
         <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
-            <mesh filename="package://husky_ur3_gazebo/meshes/l1.stl" scale="0.001 0.001 0.001"/>
+            <mesh filename="package://frcobot_description/meshes/gripper//l1.stl" scale="0.001 0.001 0.001"/>
         </geometry>
         <material name="grey"/>
         </visual>
@@ -552,14 +552,14 @@
         <collision>
         <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
-            <mesh filename="package://husky_ur3_gazebo/meshes/l2.stl" scale="0.001 0.001 0.001"/>
+            <mesh filename="package://frcobot_description/meshes/gripper//l2.stl" scale="0.001 0.001 0.001"/>
         </geometry>
         </collision>
 
         <visual>
         <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
-            <mesh filename="package://husky_ur3_gazebo/meshes/l2.stl" scale="0.001 0.001 0.001"/>
+            <mesh filename="package://frcobot_description/meshes/gripper//l2.stl" scale="0.001 0.001 0.001"/>
         </geometry>
         <material name="grey"/>
         </visual>
