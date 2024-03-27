@@ -18,5 +18,7 @@ include_directories(
 
 catkin_install_python(PROGRAMS
   scripts/main.py
+  scripts/forward_k.py
+  scripts/backward_k.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )

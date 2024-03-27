@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 import sys
 import math
@@ -117,15 +117,14 @@ def place_object(name, arm, gripper):
 
 def main():
     moveit_commander.roscpp_initialize(sys.argv)
-    rospy.init_node('gen3_lite_pick_place')
+    rospy.init_node('gen3_lite_pick_place', anonymous=True)
     rospy.sleep(2)
 
-    arm = moveit_commander.MoveGroupCommander('fr10_arm',
-                                              ns=rospy.get_namespace())
     robot = moveit_commander.RobotCommander('robot_description')
+    arm = moveit_commander.MoveGroupCommander('fr10_arm', ns=rospy.get_namespace())
     # gripper = robot.get_joint('right_finger_bottom_joint')
 
-    arm.set_num_planning_attempts(45)
+    # arm.set_num_planning_attempts(45)
 
     # add_collision_objects()
     # pick_object(name='target_1', arm=arm, gripper=gripper)

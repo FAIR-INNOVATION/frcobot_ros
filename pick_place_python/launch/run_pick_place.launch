@@ -1,0 +1,5 @@
+<launch>
+    <arg name="robot_name" default="/" />
+    <arg name="start_delay_seconds" default="0" />
+    <node name="pick_place" pkg="pick_place_python" type="backward_k.py" ns="$(arg robot_name)" output="screen" launch-prefix="bash -c 'sleep $(arg start_delay_seconds); $0 $@' " />
+</launch>
