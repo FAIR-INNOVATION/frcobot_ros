@@ -41,14 +41,18 @@ git clone https://github.com/TPODAvia/ROS1-installation.git
 chmod +x ROS1-installation/ROS.sh
 sudo ./ROS1-installation/ROS.sh
 ```
+Do the script below only once:
 ```bash
 echo "source /opt/ros/noetic/setup.bash" >> ~/.bashrc
+echo "source ~/catkin_ws/devel/setup.bash" >> ~/.bashrc
 source ~/.bashrc
 source /opt/ros/noetic/setup.bash
 sudo apt-get install python3-rosdep -y
 ```
 
 ```bash
+cd ~/catkin_ws/src
+git clone https://github.com/TPODAvia/frcobot_ros.git
 sudo cp ~/catkin_ws/src/frcobot_ros/frcobot_hw/lib/* /opt/ros/noetic/lib
 
 sudo apt-get install -y ros-noetic-rosparam-shortcuts ros-noetic-ros-control ros-noetic-ros-controllers ros-noetic-moveit -y
@@ -62,7 +66,7 @@ sudo rosdep init
 
 rosdep update
 rosdep install --from-paths src --ignore-src -y
-catkin make
+
 ```
 
 

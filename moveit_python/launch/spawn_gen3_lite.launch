@@ -1,0 +1,5 @@
+<launch>
+    <include file="$(find kortex_gazebo)/launch/spawn_kortex_robot.launch">
+        <arg name="arm" value="gen3_lite" />
+    </include>
+</launch>
