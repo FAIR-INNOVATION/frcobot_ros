@@ -6,6 +6,8 @@ Panels:
       Expanded:
         - /MotionPlanning1
         - /Image1
+        - /TF1
+        - /TF1/Frames1
       Splitter Ratio: 0.7425600290298462
     Tree Height: 204
   - Class: rviz/Help
@@ -82,6 +84,36 @@ Visualization Manager:
             Show Trail: false
             Value: true
           realsense_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          rh_p12_rn_base:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          rh_p12_rn_l1:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          rh_p12_rn_l2:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          rh_p12_rn_r1:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          rh_p12_rn_r2:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          rh_p12_rn_tf_end:
             Alpha: 1
             Show Axes: false
             Show Trail: false
@@ -174,6 +206,36 @@ Visualization Manager:
             Alpha: 1
             Show Axes: false
             Show Trail: false
+            Value: true
+          rh_p12_rn_base:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          rh_p12_rn_l1:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          rh_p12_rn_l2:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          rh_p12_rn_r1:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          rh_p12_rn_r2:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          rh_p12_rn_tf_end:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
           shoulder_Link:
             Alpha: 1
             Show Axes: false
@@ -210,7 +272,7 @@ Visualization Manager:
       Velocity_Scaling_Factor: 0.1
     - Class: rviz/Image
       Enabled: true
-      Image Topic: /camera/depth/image_raw
+      Image Topic: /camera/rgb/image_raw
       Max Value: 1
       Median window: 5
       Min Value: 0
@@ -226,12 +288,24 @@ Visualization Manager:
       Filter (whitelist): ""
       Frame Timeout: 15
       Frames:
-        All Enabled: true
+        All Enabled: false
         base_link:
           Value: true
         forearm_Link:
           Value: true
         realsense_link:
+          Value: true
+        rh_p12_rn_base:
+          Value: false
+        rh_p12_rn_l1:
+          Value: false
+        rh_p12_rn_l2:
+          Value: false
+        rh_p12_rn_r1:
+          Value: false
+        rh_p12_rn_r2:
+          Value: false
+        rh_p12_rn_tf_end:
           Value: true
         shoulder_Link:
           Value: true
@@ -244,7 +318,7 @@ Visualization Manager:
         wrist2_Link:
           Value: true
         wrist3_Link:
-          Value: true
+          Value: false
       Marker Alpha: 1
       Marker Scale: 1
       Name: TF
@@ -261,6 +335,15 @@ Visualization Manager:
                     wrist2_Link:
                       wrist3_Link:
                         realsense_link:
+                          {}
+                        rh_p12_rn_base:
+                          rh_p12_rn_l1:
+                            rh_p12_rn_l2:
+                              {}
+                          rh_p12_rn_r1:
+                            rh_p12_rn_r2:
+                              {}
+                        rh_p12_rn_tf_end:
                           {}
       Update Interval: 0
       Value: true
@@ -280,7 +363,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/XYOrbit
-      Distance: 2.996500015258789
+      Distance: 0.8345281481742859
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -288,17 +371,17 @@ Visualization Manager:
         Value: false
       Field of View: 0.7853981852531433
       Focal Point:
-        X: 0.11356700211763382
-        Y: 0.10592000186443329
-        Z: 2.2351800055275817e-07
+        X: -1.383549451828003
+        Y: -0.587624728679657
+        Z: 2.2351798634190345e-07
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.5197969675064087
+      Pitch: 0.6197969317436218
       Target Frame: base_link
-      Yaw: 5.65494966506958
+      Yaw: 3.554939031600952
     Saved: ~
 Window Geometry:
   Displays:
