@@ -1,0 +1,1 @@
+# read json file and then convert to to the real compatible mod

@@ -1,7 +1,7 @@
 <launch>
 
   <!-- By default, we do not start a database (it can be large) -->
-  <arg name="db" default="false" />
+  <arg name="db" default="true" />
   <!-- Allow user to specify database location -->
   <arg name="db_path" default="$(find fr10_moveit_config)/default_warehouse_mongo_db" />
 
@@ -63,7 +63,7 @@
   </include>
 
   <!-- If database loading was enabled, start mongodb as well -->
-  <include file="$(find fr10_moveit_config)/launch/gazebo/default_warehouse_db.launch" if="$(arg db)">
+  <include file="$(find fr10_moveit_config)/launch/default_warehouse_db.launch" if="$(arg db)">
     <arg name="moveit_warehouse_database_path" value="$(arg db_path)"/>
   </include>
 
@@ -71,7 +71,7 @@
   <include file="$(find gazebo_ros_model_color)/launch/spawn.launch" if="$(arg spawn_box)">
   </include>
 
-  <!-- 210927 YSW: Added gripper gazebo publisher -->                                           
+  <!-- 210927 YSW: Added gripper gazebo control publisher -->                                           
   <node name="gripper_gazebo_pub" pkg="fr10_moveit_config" type="gazebo_rh_pub"/>
 
 </launch>
