@@ -342,6 +342,29 @@
 
     </gazebo>
 
+    <link name="ground_plane_box">
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <box size="10.0 10.0 0.005"/> 
+            </geometry>
+            <material name="Grey">
+                <color rgba="0.7 0.7 0.7 1.0"/>
+            </material>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <box size="10.0 10.0 0.005"/> 
+            </geometry>
+        </collision>
+    </link>
+
+    <joint name="ground_plane_box" type="fixed">
+        <parent link="world" />
+        <child link="ground_plane_box" />
+        <origin xyz="0 0 -0.0025" rpy="0 0 0" />
+    </joint>
 
 </robot>
 

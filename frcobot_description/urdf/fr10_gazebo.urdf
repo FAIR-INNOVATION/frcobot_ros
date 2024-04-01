@@ -404,7 +404,6 @@
         <geometry>
             <mesh filename="package://frcobot_description/meshes/gripper//base.stl" scale="0.001 0.001 0.001"/>
         </geometry>
-        <material name="grey"/>
         </visual>
 
         <inertial>
@@ -458,7 +457,6 @@
         <geometry>
             <mesh filename="package://frcobot_description/meshes/gripper//r1.stl" scale="0.001 0.001 0.001"/>
         </geometry>
-        <material name="grey"/>
         </visual>
 
         <inertial>
@@ -504,7 +502,6 @@
         <geometry>
             <mesh filename="package://frcobot_description/meshes/gripper//r2.stl" scale="0.001 0.001 0.001"/>
         </geometry>
-        <material name="grey"/>
         </visual>
 
         <inertial>
@@ -550,7 +547,6 @@
         <geometry>
             <mesh filename="package://frcobot_description/meshes/gripper//l1.stl" scale="0.001 0.001 0.001"/>
         </geometry>
-        <material name="grey"/>
         </visual>
 
         <inertial>
@@ -596,7 +592,6 @@
         <geometry>
             <mesh filename="package://frcobot_description/meshes/gripper//l2.stl" scale="0.001 0.001 0.001"/>
         </geometry>
-        <material name="grey"/>
         </visual>
 
         <inertial>
@@ -605,5 +600,29 @@
             <inertia ixx="0.00001" ixy="0.0" ixz="0.0" iyy="0.00001" iyz="0.0" izz="0.00001" />
         </inertial>
     </link>
+
+    <link name="ground_plane_box">
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <box size="10.0 10.0 0.005"/> 
+            </geometry>
+            <material name="Grey">
+                <color rgba="0.7 0.7 0.7 1.0"/>
+            </material>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <box size="10.0 10.0 0.005"/> 
+            </geometry>
+        </collision>
+    </link>
+
+    <joint name="ground_plane_box" type="fixed">
+        <parent link="world" />
+        <child link="ground_plane_box" />
+        <origin xyz="0 0 -0.005" rpy="0 0 0" />
+    </joint>
 
 </robot>
