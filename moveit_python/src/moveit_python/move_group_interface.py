@@ -55,6 +55,7 @@ class MoveGroupInterface(object):
             self._listener = listener
         self.plan_only = plan_only
         self.planner_id = None
+        self.pipeline_id = None
         self.planning_time = 15.0
 
     def get_move_action(self):
@@ -69,6 +70,8 @@ class MoveGroupInterface(object):
                             **kwargs):
         # Check arguments
         supported_args = ("max_velocity_scaling_factor",
+                          "max_acceleration_scaling_factor",
+                          "pipeline_id",
                           "planner_id",
                           "planning_scene_diff",
                           "planning_time",
@@ -105,6 +108,13 @@ class MoveGroupInterface(object):
 
         # 5. fill in trajectory constraints
 
+        # 5.5 fill pipeline id
+        try:
+            g.request.pipeline_id = kwargs["pipeline_id"]
+        except KeyError:
+            if self.pipeline_id:
+                g.request.pipeline_id = self.pipeline_id
+
         # 6. fill in planner id
         try:
             g.request.planner_id = kwargs["planner_id"]
@@ -119,7 +129,7 @@ class MoveGroupInterface(object):
         try:
             g.request.num_planning_attempts = kwargs["num_attempts"]
         except KeyError:
-            g.request.num_planning_attempts = 1
+            g.request.num_planning_attempts = 10
 
         # 9. fill in allowed planning time
         try:
@@ -130,6 +140,11 @@ class MoveGroupInterface(object):
         # Fill in velocity scaling factor
         try:
             g.request.max_velocity_scaling_factor = kwargs["max_velocity_scaling_factor"]
+        except KeyError:
+            pass  # do not fill in at all
+
+        try:
+            g.request.max_acceleration_scaling_factor = kwargs["max_acceleration_scaling_factor"]
         except KeyError:
             pass  # do not fill in at all
 
@@ -167,6 +182,8 @@ class MoveGroupInterface(object):
                    **kwargs):
         # Check arguments
         supported_args = ("max_velocity_scaling_factor",
+                          "max_acceleration_scaling_factor",
+                          "pipeline_id",
                           "planner_id",
                           "planning_time",
                           "plan_only",
@@ -218,6 +235,13 @@ class MoveGroupInterface(object):
 
         # 5. fill in request trajectory constraints
 
+        # 5.5 fill pipeline id
+        try:
+            g.request.pipeline_id = kwargs["pipeline_id"]
+        except KeyError:
+            if self.pipeline_id:
+                g.request.pipeline_id = self.pipeline_id
+
         # 6. fill in request planner id
         try:
             g.request.planner_id = kwargs["planner_id"]
@@ -232,7 +256,7 @@ class MoveGroupInterface(object):
         try:
             g.request.num_planning_attempts = kwargs["num_attempts"]
         except KeyError:
-            g.request.num_planning_attempts = 1
+            g.request.num_planning_attempts = 10
 
         # 9. fill in request allowed planning time
         try:
@@ -243,6 +267,11 @@ class MoveGroupInterface(object):
         # Fill in velocity scaling factor
         try:
             g.request.max_velocity_scaling_factor = kwargs["max_velocity_scaling_factor"]
+        except KeyError:
+            pass  # do not fill in at all
+
+        try:
+            g.request.max_acceleration_scaling_factor = kwargs["max_acceleration_scaling_factor"]
         except KeyError:
             pass  # do not fill in at all
 
@@ -272,6 +301,11 @@ class MoveGroupInterface(object):
     ## @param planner_id The string for the planner id, set to None to clear
     def setPlannerId(self, planner_id):
         self.planner_id = str(planner_id)
+
+    ## @brief Sets the pipeline_id used for all future planning requests.
+    ## @param pipeline_id The string for the planner id, set to None to clear
+    def setPipelineId(self, pipeline_id):
+        self.pipeline_id = str(pipeline_id)
 
     ## @brief Set default planning time to be used for future planning request.
     def setPlanningTime(self, time):

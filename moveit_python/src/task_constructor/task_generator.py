@@ -54,11 +54,6 @@ class CreateSubscriber():
 ######################################################################################################
 
 def main():
-    print(" --- Cranfield University --- ")
-    print("        (c) IFRA Group        ")
-    print("promavto_execution --> GET ROBOT STATE")
-    print("Python script -> RobotState.py")
-
     # Argument parsing and other setup code goes here
 
     rospy.spin()

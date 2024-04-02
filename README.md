@@ -114,3 +114,12 @@ rosrun fr10_moveit_config gripper_control.py
 
 
 ## Add PILZ to motion control
+
+
+## Install mongo database
+```bash
+sudo apt-get install mongodb-server
+sudo apt-get install mongodb-dev
+sudo apt-get install ros-noetic-warehouse-ros
+sudo apt-get install ros-noetic-warehouse-ros-mongo
+```

@@ -12,7 +12,6 @@
   <arg     if="$(arg info)" name="command_args" value="--debug" />
 
   <!-- move_group settings -->
-  <arg name="pipeline" default="ompl" />
   <arg name="allow_trajectory_execution" default="true"/>
   <arg name="fake_execution" default="false"/>
   <arg name="max_safe_path_cost" default="1"/>
@@ -44,7 +43,8 @@
   </include>
 
   <!-- Planning Functionality -->
-  <!-- <include ns="move_group" file="$(find fr10_moveit_config)/launch/gazebo/planning_pipeline.launch.xml">
+  <!-- <arg name="pipeline" default="pilz_industrial_motion_planner" />
+  <include ns="move_group" file="$(find fr10_moveit_config)/launch/gazebo/planning_pipeline.launch.xml">
     <arg name="pipeline" value="$(arg pipeline)" />
   </include> -->
   <group ns="move_group/planning_pipelines">
