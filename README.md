@@ -47,7 +47,14 @@ echo "source /opt/ros/noetic/setup.bash" >> ~/.bashrc
 echo "source ~/catkin_ws/devel/setup.bash" >> ~/.bashrc
 source ~/.bashrc
 source /opt/ros/noetic/setup.bash
+```
+Install libraries
+```bash
 sudo apt-get install python3-rosdep -y
+sudo apt-get install libxmlrpcpp-dev
+sudo apt-get install -y ros-noetic-rosparam-shortcuts ros-noetic-ros-control ros-noetic-ros-controllers ros-noetic-moveit -y
+sudo apt-get install xterm
+# sudo apt-get install ros-noetic-joint-state-controller ros-noetic-effort-controllers ros-noetic-position-controllers ros-noetic-velocity-controllers ros-noetic-gazebo-ros ros-noetic-gazebo-ros-control
 ```
 
 ```bash
@@ -55,10 +62,6 @@ cd ~/catkin_ws/src
 git clone https://github.com/TPODAvia/frcobot_ros.git
 sudo cp ~/catkin_ws/src/frcobot_ros/frcobot_hw/lib/* /opt/ros/noetic/lib
 
-sudo apt-get install -y ros-noetic-rosparam-shortcuts ros-noetic-ros-control ros-noetic-ros-controllers ros-noetic-moveit -y
-
-<!-- sudo apt-get install ros-noetic-joint-state-controller ros-noetic-effort-controllers ros-noetic-position-controllers ros-noetic-velocity-controllers ros-noetic-gazebo-ros ros-noetic-gazebo-ros-control -->
-sudo apt-get install xterm
 
 cd ~/catkin_ws
 source /opt/ros/noetic/setup.bash
@@ -69,6 +72,11 @@ rosdep install --from-paths src --ignore-src -y
 
 ```
 
+Compile the project
+```bash
+catkin_make
+source devel/setup.bash
+```
 
 ## Gazebo simulation
 
