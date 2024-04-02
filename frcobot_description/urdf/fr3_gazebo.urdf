@@ -363,7 +363,7 @@
     <joint name="ground_plane_box" type="fixed">
         <parent link="world" />
         <child link="ground_plane_box" />
-        <origin xyz="0 0 -0.0025" rpy="0 0 0" />
+        <origin xyz="0 0 -0.005" rpy="0 0 0" />
     </joint>
 
 </robot>

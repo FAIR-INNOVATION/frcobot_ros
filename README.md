@@ -111,3 +111,6 @@ You can use python to execute the command
 ```bash
 rosrun fr10_moveit_config gripper_control.py
 ```
+
+
+## Add PILZ to motion control

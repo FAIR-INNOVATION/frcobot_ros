@@ -44,10 +44,21 @@
   </include>
 
   <!-- Planning Functionality -->
-  <include ns="move_group" file="$(find fr3_moveit_config)/launch/hardware/planning_pipeline.launch.xml">
+  <!-- <include ns="move_group" file="$(find fr3_moveit_config)/launch/hardware/planning_pipeline.launch.xml">
     <arg name="pipeline" value="$(arg pipeline)" />
-  </include>
+  </include> -->
+  <group ns="move_group/planning_pipelines">
 
+    <include file="$(find fr3_moveit_config)/launch/gazebo/planning_pipeline.launch.xml">
+      <arg name="pipeline" value="ompl" />
+    </include>
+    
+    <include file="$(find fr3_moveit_config)/launch/gazebo/planning_pipeline.launch.xml">
+      <arg name="pipeline" value="pilz_industrial_motion_planner" />
+    </include>
+    
+  </group>
+  
   <!-- Trajectory Execution Functionality -->
   <include ns="move_group" file="$(find fr3_moveit_config)/launch/hardware/trajectory_execution.launch.xml" if="$(arg allow_trajectory_execution)">
     <arg name="moveit_manage_controllers" value="true" />
