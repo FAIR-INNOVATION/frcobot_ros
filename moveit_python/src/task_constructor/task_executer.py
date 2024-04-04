@@ -98,7 +98,7 @@ def task():
     place_pose.header.frame_id = "world"
     place_pose.pose.position.x = x
     place_pose.pose.position.y = y
-    place_pose.pose.position.z = z+0.1
+    place_pose.pose.position.z = z+0.3
     place_pose.pose.orientation.w = 1.0
     result = move_group_interface.moveToPose(place_pose, gripper_frame="rh_p12_rn_tf_end", tolerance=0.01, wait=True, max_velocity_scaling_factor=0.1, max_acceleration_scaling_factor=0.1)
 
@@ -108,7 +108,7 @@ def task():
     #---------------------------------------------------------------------------
     remove_attached("hello_box")
     gripper_open()
-    spawn_obj(x,y,z+0.1)
+    spawn_obj(x,y,z+0.3)
     time.sleep(5)
     #---------------------------------------------------------------------------
     move_group_interface.setPipelineId("ompl")
