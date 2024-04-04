@@ -121,8 +121,20 @@ rosrun fr10_moveit_config gripper_control.py
 ```
 
 
-## Add PILZ to motion control
+## Use moveit_python
 
+1. Use executor example
+```bash
+rosrun moveit_python task_executer.py
+```
+2. Use generator example
+```bash
+# rosrun moveit_python task_generator.py
+```
+3. Use task checker and convert to real-manipulator task
+```bash
+# python3 task_observer.py --check=True --convert2real=False
+```
 
 ## Install mongo database
 ```bash
