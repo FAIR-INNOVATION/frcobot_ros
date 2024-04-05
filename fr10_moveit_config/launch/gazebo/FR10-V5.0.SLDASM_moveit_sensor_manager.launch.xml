@@ -1,3 +1,24 @@
 <launch>
 
+    <!-- <node name="update_frame_id" pkg="depth_image_proc" type="update_frame_id.py" output="screen" /> -->
+
+    <!-- Nodelet manager for this pipeline -->
+    <node pkg="nodelet" type="nodelet" args="manager" name="standalone_nodelet" output="screen"/>
+
+    <!-- Convert to point cloud -->
+    <node pkg="nodelet" type="nodelet" name="depth_image_proc" args="load depth_image_proc/point_cloud_xyzrgb standalone_nodelet --no-bond">
+        <!-- Input: Camera calibration and metadata.  (sensor_msgs/CameraInfo) -->
+        <remap from="rgb/camera_info" to="/camera/rgb/camera_info"/>
+
+        <!-- Input: Rectified color image. (sensor_msgs/Image) -->
+        <remap from="rgb/image_rect_color" to="/camera/rgb/image_raw"/>
+
+        <!-- Input: Rectified depth image, registered to the RGB camera. (sensor_msgs/Image) -->
+        <remap from="depth_registered/image_rect" to="/camera/depth/image_raw"/>
+
+        <!-- Output: XYZ point cloud. If using PCL, subscribe as PointCloud<PointXYZ>.  (sensor_msgs/PointCloud2)  -->
+        <remap from="depth_registered/points" to="/camera/pointcloud/raw"/>
+
+    </node>
+
 </launch>

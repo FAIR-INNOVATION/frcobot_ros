@@ -17,10 +17,11 @@
   This corresponds to moving around the real robot without the use of MoveIt.
   -->
   <arg name="use_gui" default="false" />
+  <arg name="use_rviz" default="false" />
 
   <!-- Gazebo specific options -->
   <arg name="gazebo_gui" default="true"/>
-  <arg name="paused" default="false"/>
+  <arg name="paused" default="true"/>
   <!-- By default, use the urdf location provided from the package -->
   <arg name="urdf_path" default="$(find frcobot_description)/urdf/fr10_gazebo.urdf"/>
 
@@ -57,7 +58,7 @@
   </include>  
 
   <!-- Run Rviz and load the default config to see the state of the move_group node -->
-  <include file="$(find fr10_moveit_config)/launch/moveit_rviz.launch">
+  <include file="$(find fr3_moveit_config)/launch/moveit_rviz.launch" if="$(arg use_rviz)">
     <arg name="rviz_config" value="$(find fr10_moveit_config)/launch/moveit_camera.rviz"/>
     <arg name="debug" value="$(arg debug)"/>
   </include>

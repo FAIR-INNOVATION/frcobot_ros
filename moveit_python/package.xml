@@ -6,8 +6,8 @@
   <description>
     A pure-python interaface to the MoveIt! ROS API.
   </description>
-  <author>Michael Ferguson</author>
-  <maintainer email="fergs@botnuvo.com">Michael Ferguson</maintainer>
+  <author>TPODAvia</author>
+  <maintainer email="vmd000200000088@gmail.com">TPODAvia</maintainer>
   <license>BSD</license>
   <url>http://ros.org/wiki/moveit_python</url>
   
