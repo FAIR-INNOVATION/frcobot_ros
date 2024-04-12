@@ -66,6 +66,8 @@ def task():
     gripper_open()
     #---------------------------------------------------------------------------
     # OMPL Algorithm is set as default
+    move_group_interface.setPipelineId("ompl")
+    move_group_interface.setPlannerId("RRTConnect")
     #---------------------------------------------------------------------------
     print("task_executer.py: Move to zero positions")
     move_group_interface.moveToJointPosition(joints=["j1","j2","j3","j4","j5","j6"], positions=[0,-1.57,1.57,0,0,0], tolerance=0.01, wait=True)
