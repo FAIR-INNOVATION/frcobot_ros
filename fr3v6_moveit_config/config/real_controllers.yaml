@@ -1,0 +1,17 @@
+# controller_manager_ns: controller_manager
+
+controller_list:
+  - name: frrobot/position_trajectory_controller
+    action_ns: follow_joint_trajectory
+    type: FollowJointTrajectory
+    default: true
+    joints:
+      - j1
+      - j2
+      - j3
+      - j4
+      - j5
+      - j6
+initial:  # Define initial robot poses.
+  - group: fr3v6_arm
+    pose: zero

@@ -1,0 +1,13 @@
+controller_list:
+  - name: fake_fr10v6_arm_controller
+    type: $(arg fake_execution_type)
+    joints:
+      - j1
+      - j2
+      - j3
+      - j4
+      - j5
+      - j6
+initial:  # Define initial robot poses.
+  - group: fr10v6_arm
+    pose: zero

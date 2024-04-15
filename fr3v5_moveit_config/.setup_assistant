@@ -1,0 +1,11 @@
+moveit_setup_assistant_config:
+  URDF:
+    package: frcobot_description
+    relative_path: urdf/fr3v5.urdf
+    xacro_args: ""
+  SRDF:
+    relative_path: config/fr3v5.srdf
+  CONFIG:
+    author_name: FAIRINO Group
+    author_email: zhaojinqi@frtech.fr
+    generated_timestamp: 1704875138

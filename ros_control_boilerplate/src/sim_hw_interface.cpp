@@ -35,12 +35,12 @@ namespace ros_control_boilerplate
   void SimHWInterface::read(ros::Duration &elapsed_time)
   {
     // No need to read since our write() command populates our state for us
-    ROS_INFO("READ");
+    // ROS_INFO("READ");
   }
 
   void SimHWInterface::write(ros::Duration &elapsed_time)
   {
-    ROS_INFO("WRITE");
+    // ROS_INFO("WRITE");
     // Safety
     enforceLimits(elapsed_time);
 
