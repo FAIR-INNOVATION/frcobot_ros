@@ -9,6 +9,7 @@ from moveit_python import MoveGroupInterface, PickPlaceInterface, PlanningSceneI
 import time
 import sys
 from std_msgs.msg import Float64
+from tf import TransformListener
 
 # Initialize ROS node
 rospy.init_node('pick_and_place_node')
@@ -16,6 +17,7 @@ scene = PlanningSceneInterface("/base_link")
 move_group_interface = MoveGroupInterface(group="fr10_arm", frame="world")
 pick_place_interface = PickPlaceInterface(group="fr10_arm", ee_group="gripper")
 pub = rospy.Publisher('/rh_p12_rn_position/command', Float64, queue_size=10)
+rate = rospy.Rate(10)
 
 def task(mode_list, name_list, content_list):
     for i in len(mode_list):
@@ -23,6 +25,7 @@ def task(mode_list, name_list, content_list):
         content_task = content_list[i]
 
         if mode_list[i] == "get_joints_position":
+            print("*"*40)
             print("task_executer_json.py: get_joints_position")
             joint_list = []
             pos_list = []
@@ -31,8 +34,10 @@ def task(mode_list, name_list, content_list):
                 pos_list.append(pos)
             move_group_interface.moveToJointPosition(joints=[joint_list], positions=[pos_list], tolerance=0.01, wait=True)
             time.sleep(5)
+            print("*"*40)
 
         elif mode_list[i] == "get_end_coordinate":
+            print("*"*40)
             print("task_executer_json.py: get_end_coordinate")
             for loc_type, coordinate in content_task.items():
                 if loc_type == "position":
@@ -42,6 +47,7 @@ def task(mode_list, name_list, content_list):
                 else:
                     print("get_end_coordinate error")
                     sys.exit()
+
             pick_pose = PoseStamped()
             pick_pose.header.frame_id = "world"
             pick_pose.pose.position.x = position[0]
@@ -55,8 +61,10 @@ def task(mode_list, name_list, content_list):
             if result.error_code.val < 1:
                 print(f"task_executer.py Error: {result.error_code}")
                 sys.exit()
+            print("*"*40)
 
         elif mode_list[i] == "spawn_object":
+            print("*"*40)
             print("task_executer_json.py: spawn_object")
             axis_list = []
             value_list = []
@@ -65,47 +73,68 @@ def task(mode_list, name_list, content_list):
                 value_list.append(value)
             scene.addBox(target_task, 0.05, 0.05, 0.05, value_list[0], value_list[1], value_list[2], use_service=True)
             time.sleep(5)
+            print("*"*40)
 
         elif mode_list[i] == "attach_object":
+            print("*"*40)
             print("task_executer_json.py: attach_object")
             # scene.attachBox(target_task, 0.05, 0.05, 0.05, 0, 0, 0, "rh_p12_rn_tf_end")
             scene.attachBox(target_task, 0.05, 0.05, 0.05, 0, 0, 0, content_task)
             time.sleep(5)
+            print("*"*40)
 
         elif mode_list[i] == "detach_object":
+            print("*"*40)
+            print("task_executer_json.py: detach_object")
             scene.removeAttachedObject(target_task)
-            axis_list = []
-            value_list = []
-            for axis, value in content_task.items():
-                axis_list.append(axis)
-                value_list.append(value)
-            scene.addBox(target_task, 0.05, 0.05, 0.05, value_list[0], value_list[1], value_list[2], use_service=True)
+            target = content_task
+            print(f"Argument is {target}")
+            listener = TransformListener()
+            listener.waitForTransform("/world", f"/{target}", rospy.Time(), rospy.Duration(5.0))
+            position, quaternion = listener.lookupTransform("/world", f"/{target}", rospy.Time())
             time.sleep(5)
+            scene.addBox(target_task, 0.05, 0.05, 0.05, position[0], position[1], position[2], use_service=True)
+            time.sleep(5)
+            print("*"*40)
 
         elif mode_list[i] == "gripper_open":
+            print("*"*40)
+            print("task_executer_json.py: gripper_open")
             msg = Float64()
             msg.data = content_task
             print(f"task_executer.py: Open: {msg.data}")
             pub.publish(msg)
+            print("*"*40)
 
         elif mode_list[i] == "gripper_close":
+            print("*"*40)
+            print("task_executer_json.py: gripper_close")
             msg = Float64()
-            if value < 0:
-                msg.data = content_task
-            else:
-                msg.data = value
+            msg.data = content_task
             print(f"task_executer.py: Close: {msg.data}")
             pub.publish(msg)
+            print("*"*40)
 
         elif mode_list[i] == "choose_pipeline":
+            print("*"*40)
+            print("task_executer_json.py: choose_pipeline")
             move_group_interface.setPipelineId(target_task)
             move_group_interface.setPlannerId(content_task)
+            print("*"*40)
 
         elif mode_list[i] == "choose_follow_mode":
+            print("*"*40)
+            print("task_executer_json.py: choose_follow_mode")
+            print("WARNING! Follow mode is not available in task_executor_json")
+            print("*"*40)
             pass
 
         elif mode_list[i] == "clear_scene":
+            print("*"*40)
+            print("task_executer_json.py: clear_scene")
             scene.clear()
+            time.sleep(2)
+            print("*"*40)
 
         else:
             print("Content error")
@@ -118,25 +147,24 @@ if __name__ == '__main__':
     mode_list = []
     name_list = []
     content_list = []
-    while not rospy.is_shutdown():
-        if isinstance(data, list):
-            for index, item in enumerate(data):
-                # Assuming the first name is the first key in each item
-                for timer, content in item.items():
-                    # print(f"\n")
-                    for mode, content2 in content.items():
-                        mode_list.append(mode)
-                        for content_name, content3 in content2.items():
-                            name_list.append(content_name)
-                            content_list.append(content3)
-        break
+
+    if isinstance(data, list):
+        for index, item in enumerate(data):
+            for timer, content in item.items():
+                # print(f"\n")
+                for mode, content2 in content.items():
+                    mode_list.append(mode)
+                    for content_name, content3 in content2.items():
+                        name_list.append(content_name)
+                        content_list.append(content3)
+
     
-    print("*"*40)
+    print("#"*80)
     print(mode_list)
-    print("*"*40)
+    print("#"*80)
     print(name_list)
-    print("*"*40)
+    print("#"*80)
     print(content_list)
-    print("*"*40)
+    print("#"*80)
     task(mode_list, name_list, content_list)
     sys.exit()
