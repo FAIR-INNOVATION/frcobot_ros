@@ -30,11 +30,12 @@ class TaskGenerator():
         self.rate = rospy.Rate(10)
 
         mode_actions = {
-            "get_joints_position": self.get_joints_position,
-            "get_end_coordinate": self.get_end_coordinate,
+            "joints_position": self.joints_position,
+            "end_coordinate": self.end_coordinate,
             "spawn_object": self.spawn_object,
             "attach_object": self.attach_object,
             "detach_object": self.detach_object,
+            "remove_object": self.remove_object,
             "gripper_open": self.gripper_open,
             "gripper_close": self.gripper_close,
             "choose_pipeline": self.choose_pipeline,
@@ -52,8 +53,23 @@ class TaskGenerator():
             print("Available modes:", list(mode_actions.keys()))
             sys.exit()
 
-    def save_json(self, joint_data_local):
-        save_path = f'{self.home_dir}/catkin_ws/src/frcobot_ros/moveit_python/tasks/{self.robot}/test.json'
+    def load_json(self, load_path=None):
+        if load_path == None:
+            load_path = f'{self.home_dir}/catkin_ws/src/frcobot_ros/moveit_python/tasks/{self.robot}/test.json'
+        try:
+            with open(load_path, 'r') as file:
+                data = json.load(file)
+        except FileNotFoundError:
+            data = []
+        except json.JSONDecodeError:
+            # Attempt to repair or bypass corrupted JSON data
+            print(f"File are corrupted: {load_path}")
+            sys.exit()
+        return data
+
+    def save_json(self, data_local, save_path=None):
+        if save_path == None:
+            save_path = f'{self.home_dir}/catkin_ws/src/frcobot_ros/moveit_python/tasks/{self.robot}/test.json'
         try:
             with open(save_path, 'r') as file:
                 data = json.load(file)
@@ -64,50 +80,110 @@ class TaskGenerator():
             print(f"File are corrupted: {save_path}")
             sys.exit()
 
-        data.append(joint_data_local)
+        data.append(data_local)
         with open(save_path, 'w') as file:
             json.dump(data, file, indent=1)
 
-    def get_joints_position(self):
-        self.subscriber = rospy.Subscriber("/joint_states", JointState, self.get_joints_position_callback)
-        while not rospy.is_shutdown():
-            if ((self.name is not None) and (self.position is not None)):
-                position_list = {}
+    def joints_position(self):
+        # if 5 param then this esle that
+        if (len(self.arguments) == 3) or (len(self.arguments) == 9):
+            self.subscriber = rospy.Subscriber("/joint_states", JointState, self.joints_position_callback)
+            while not rospy.is_shutdown():
+                if ((self.name is not None) and (self.position is not None)):
+                    break
+                self.rate.sleep()
+
+            position_list = {}
+            if len(self.arguments) == 3:
                 for name, position in zip(self.name, self.position):
                     position_list[name] = position
-                self.joint_data1["positions"] = position_list
-                self.joint_data2[self.mode] = self.joint_data1
-                self.joint_data3[time.time()] = self.joint_data2
+            elif len(self.arguments) == 9:
+                j1_to_j6 = []
+                for i in range(3,len(self.arguments)):
+                    j1_to_j6.append(float(self.arguments[i]))
+                print(f"Joints position: {j1_to_j6}")
 
-                self.save_json(self.joint_data3)
-                print("get_joints_position finished")
-                break
-            self.rate.sleep()
-        sys.exit()
-
-    def get_joints_position_callback(self, msg):
-        self.name = msg.name
-        self.position = msg.position
-
-    def get_end_coordinate(self):
-        if len(self.arguments) == 4:
-            # Iterate over all arguments starting from the second one (index 1)
-            target = str(self.arguments[len(sys.argv)-1])
-            print(f"Argument is {self.arguments[len(sys.argv)-1]}")
-
-            listener = TransformListener()
-            listener.waitForTransform("/world", f"/{target}", rospy.Time(), rospy.Duration(5.0))
-            position, quaternion = listener.lookupTransform("/world", f"/{target}", rospy.Time())
-            self.joint_data1[target] = {'position': position, 'quaternion': quaternion}
+            self.joint_data1["positions"] = position_list
             self.joint_data2[self.mode] = self.joint_data1
             self.joint_data3[time.time()] = self.joint_data2
+
             self.save_json(self.joint_data3)
-            print("get_end_coordinate finished")
+            print("joints_position finished")
             sys.exit()
         else:
             print("Arguments error")
-            print("Example: rosrun moveit_python task_generator.py fr10 get_end_coordinate rh_p12_rn_tf_end")
+            print("Example of getting current position: rosrun moveit_python task_generator.py fr10 joints_position")
+            print("Example of getting desired [j1...j6]: rosrun moveit_python task_generator.py fr10 joints_position 0 0 0 0 0 0")
             sys.exit()
+
+    def joints_position_callback(self, msg):
+        self.name = msg.name
+        self.position = msg.position
+
+    def end_coordinate(self):
+        if len(self.arguments) == 4:
+            # Iterate over all arguments starting from the second one (index 1)
+            target = str(self.arguments[len(sys.argv)-1])
+            print(f"Argument is {target}")
+            
+            scene = PlanningSceneInterface("base_link")
+
+            self.subscriber = rospy.Subscriber("/joint_states", JointState, self.joints_position_callback)
+            link_trigger = False
+            obj_trigger = False
+            while not rospy.is_shutdown():
+                if (self.name is not None):
+                    if target in self.name:
+                        link_trigger = True
+                    break
+                self.rate.sleep()
+
+            scene = PlanningSceneInterface("base_link")
+            if len(scene.getKnownCollisionObjects() + scene.getKnownAttachedObjects()) != 0:
+                for name in scene.getKnownCollisionObjects():
+                    print(f"getKnownCollisionObjects: {name}")
+                    if target in name:
+                        obj_trigger = True
+                for name in scene.getKnownAttachedObjects():
+                    print(f"getKnownAttachedObjects: {name}")
+                    if target in name:
+                        print(f"Error: {target} is attached. Use the link name instead.")
+                        sys.exit()
+
+            if link_trigger == True:
+                listener = TransformListener()
+                listener.waitForTransform("/world", f"/{target}", rospy.Time(), rospy.Duration(5.0))
+                position, quaternion = listener.lookupTransform("/world", f"/{target}", rospy.Time())
+                self.joint_data1[target] = {'position': position, 'quaternion': quaternion}
+                self.joint_data2[self.mode] = self.joint_data1
+                self.joint_data3[time.time()] = self.joint_data2
+                self.save_json(self.joint_data3)
+                print("end_coordinate finished")
+            elif obj_trigger == True:
+                data = self.load_json()
+                last_spawn_object = None
+                for entry in data:
+                    for key, value in entry.items():
+                        if ('spawn_object' in value) and (target in value['spawn_object']):
+                            last_spawn_object = value['spawn_object'][target]
+
+                # Check if a spawn_object was found and print its coordinates
+                if last_spawn_object:
+                    for obj_name, obj_data in last_spawn_object.items():
+                        print(f"Last spawn_object coordinates:{obj_name} x={obj_data['x']}, y={obj_data['y']}, z={obj_data['z']}")
+                        self.joint_data1[target] = {'position': [obj_data['x'],obj_data['y'],obj_data['z']], 'quaternion': [0,0,0,1]}
+                        self.joint_data2[self.mode] = self.joint_data1
+                        self.joint_data3[time.time()] = self.joint_data2
+                        self.save_json(self.joint_data3)
+                        print("end_coordinate finished")
+                else:
+                    print(f"No spawn_object with the name {target} found in the JSON data.")
+            else:
+                print(f"There's no name '{target}' founded.")
+        else:
+            print("Arguments error")
+            print("Example: rosrun moveit_python task_generator.py fr10 end_coordinate rh_p12_rn_tf_end")
+        sys.exit()
     
     def spawn_object(self):
         if len(self.arguments) == 7:
@@ -121,7 +197,7 @@ class TaskGenerator():
             self.joint_data2[self.mode] = self.joint_data1
             self.joint_data3[time.time()] = self.joint_data2
             self.save_json(self.joint_data3)
-            print("get_end_coordinate finished")
+            print("end_coordinate finished")
             sys.exit()
         else:
             print("Arguments error")
@@ -136,7 +212,7 @@ class TaskGenerator():
             self.joint_data2[self.mode] = self.joint_data1
             self.joint_data3[time.time()] = self.joint_data2
             self.save_json(self.joint_data3)
-            print("get_end_coordinate finished")
+            print("attach_object finished")
             sys.exit()
         else:
             print("Arguments error")
@@ -159,12 +235,24 @@ class TaskGenerator():
             self.joint_data2[self.mode] = self.joint_data1
             self.joint_data3[time.time()] = self.joint_data2
             self.save_json(self.joint_data3)
-            print("get_end_coordinate finished")
+            print("detach_object finished")
             sys.exit()
         else:
             print("Arguments error")
             print("Example: rosrun moveit_python task_generator.py fr10 detach_object hello_box rh_p12_rn_tf_end")
             sys.exit()
+            
+    def remove_object(self):
+        if len(self.arguments) == 4:
+            scene = PlanningSceneInterface("/base_link")
+            scene.removeAttachedObject(self.arguments[3])
+            print("remove_object finished")
+            sys.exit()
+        else:
+            print("Arguments error")
+            print("Example: rosrun moveit_python task_generator.py fr10 remove_object hello_box")
+            sys.exit()
+            
 
     def clear_scene(self):
         scene = PlanningSceneInterface("/base_link")
@@ -281,8 +369,7 @@ class TaskGenerator():
         directory = f'{self.home_dir}/catkin_ws/src/frcobot_ros/moveit_python/tasks/{self.robot}/{self.arguments[3]}'
         directory_mod = f'{self.home_dir}/catkin_ws/src/frcobot_ros/moveit_python/tasks/{self.robot}/mod_{self.arguments[3]}'
         
-        with open(directory, 'r') as file:
-            data = json.load(file) # Load the JSON data
+        data = self.load_json(load_path=directory)
 
         # Recursive function to remove unwanted keys
         def remove_unwanted_keys(data):
@@ -299,8 +386,7 @@ class TaskGenerator():
         # Filter out empty dictionaries
         filtered_data = [item for item in cleaned_data if any(item.values())]
 
-        with open(directory_mod, 'w') as file:
-            json.dump(filtered_data, file, indent=1) # Save the cleaned data
+        self.save_json(filtered_data, save_path=directory_mod)
 
         print("delete_json_sim_content finished")
         sys.exit()
@@ -309,11 +395,14 @@ if __name__ == "__main__":
     if len(sys.argv) < 3: # Assuming TaskGenerator requires three arguments plus the script name
         if (sys.argv[1]).lower() == "help":
             print("Usage example:")
-            print("rosrun moveit_python task_generator.py fr10 get_joints_position")
-            print("rosrun moveit_python task_generator.py fr10 get_end_coordinate rh_p12_rn_tf_end")
+            print("rosrun moveit_python task_generator.py fr10 joints_position")
+            print("rosrun moveit_python task_generator.py fr10 joints_position 0 0 0 0 0 0")
+            print("rosrun moveit_python task_generator.py fr10 end_coordinate rh_p12_rn_tf_end")
+            print("rosrun moveit_python task_generator.py fr10 end_coordinate hello_box")
             print("rosrun moveit_python task_generator.py fr10 spawn_object hello_box 0 0.5 0.2")
             print("rosrun moveit_python task_generator.py fr10 attach_object hello_box rh_p12_rn_tf_end")
             print("rosrun moveit_python task_generator.py fr10 detach_object hello_box rh_p12_rn_tf_end")
+            print("rosrun moveit_python task_generator.py fr10 remove_object hello_box")
             print("rosrun moveit_python task_generator.py fr10 clear_scene")
             print("rosrun moveit_python task_generator.py fr10 gripper_open")
             print("rosrun moveit_python task_generator.py fr10 gripper_close")

@@ -146,8 +146,8 @@ rosrun moveit_python task_generator.py fr10 detele_json_sim_content test.json
 ```
 Pick and place example:
 0 `rosrun moveit_python task_generator.py fr10 clear_scene`
-1 `rosrun moveit_python task_generator.py fr10 remove_object hello_box` !!!
-2 `rosrun moveit_python task_generator.py fr10 joints_position` !!!
+1 `rosrun moveit_python task_generator.py fr10 remove_object hello_box`
+2 `rosrun moveit_python task_generator.py fr10 joints_position`
 3 `moveit_python task_generator.py fr10 spawn_object hello_box 0 0.5 0.2`
 4 `rosrun moveit_python task_generator.py fr10 choose_pipeline OMPL RRTConnect`
 5 `rosrun moveit_python task_generator.py fr10 end_coordinate hello_box` !!!
@@ -158,12 +158,12 @@ Pick and place example:
 10 `rosrun moveit_python task_generator.py fr10 gripper_open`
 11 `rosrun moveit_python task_generator.py fr10 detach_object hello_box rh_p12_rn_tf_end`
 12 `rosrun moveit_python task_generator.py fr10 choose_pipeline OMPL RRTConnect`
-13 `rosrun moveit_python task_generator.py fr10 joints_position 0 0 0 0 0 0` !!!
+13 `rosrun moveit_python task_generator.py fr10 joints_position 0 0 0 0 0 0`
 14 `rosrun moveit_python task_generator.py fr10 detele_json_sim_content test.json`
 
 3. Use executor json example
 ```bash
-rosrun moveit_python task_executer_json.py
+rosrun moveit_python task_executer_json.py test.json
 ```
 
 ## Install mongo database
