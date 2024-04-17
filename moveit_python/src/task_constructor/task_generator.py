@@ -76,7 +76,10 @@ class TaskGenerator():
             save_path = f'{self.home_dir}/catkin_ws/src/frcobot_ros/moveit_python/tasks/{self.robot}/test.json'
         try:
             with open(save_path, 'r') as file:
-                data = json.load(file)
+                if os.stat(save_path).st_size == 0:
+                    data = []
+                else:
+                    data = json.load(file)
         except FileNotFoundError:
             data = []
         except json.JSONDecodeError:
@@ -471,7 +474,7 @@ class TaskGenerator():
         # Recursive function to remove unwanted keys
         def remove_unwanted_keys(data):
             if isinstance(data, dict):
-                return {k: remove_unwanted_keys(v) for k, v in data.items() if k not in ["detach_object", "clear_scene", "attach_object", "spawn_object"]}
+                return {k: remove_unwanted_keys(v) for k, v in data.items() if k not in ["remove_object", "detach_object", "clear_scene", "attach_object", "spawn_object"]}
             elif isinstance(data, list):
                 return [remove_unwanted_keys(item) for item in data]
             else:

@@ -20,18 +20,20 @@ pub = rospy.Publisher('/rh_p12_rn_position/command', Float64, queue_size=10)
 rate = rospy.Rate(10)
 
 def task(mode_list, name_list, content_list):
-    print("*"*40)
+    print("#"*80)
     print(f"Task lenght: {len(mode_list)}")
     print("Mode list:")
     print(mode_list)
     print("Name list:")
     print(name_list)
+    print("#"*80)
     for i in range(1, len(mode_list)):
+        print("*"*40)
         target_task = name_list[i]
         content_task = content_list[i]
-
+        print(f"target_task: {target_task}")
+        print(f"content_task: {content_task}")
         if mode_list[i] == "joints_position":
-            print("*"*40)
             print("task_executer_json.py: joints_position")
             joint_list = []
             pos_list = []
@@ -51,7 +53,6 @@ def task(mode_list, name_list, content_list):
             print("*"*40)
 
         elif mode_list[i] == "end_coordinate":
-            print("*"*40)
             print("task_executer_json.py: end_coordinate")
             for loc_type, coordinate in content_task.items():
                 if loc_type == "position":
@@ -79,7 +80,6 @@ def task(mode_list, name_list, content_list):
             print("*"*40)
 
         elif mode_list[i] == "spawn_object":
-            print("*"*40)
             print("task_executer_json.py: spawn_object")
             axis_list = []
             value_list = []
@@ -94,7 +94,6 @@ def task(mode_list, name_list, content_list):
             print("*"*40)
 
         elif mode_list[i] == "attach_object":
-            print("*"*40)
             print("task_executer_json.py: attach_object")
             print(f"{target_task} attached to {content_task}")
             # scene.attachBox(target_task, 0.05, 0.05, 0.05, 0, 0, 0, "rh_p12_rn_tf_end")
@@ -103,7 +102,6 @@ def task(mode_list, name_list, content_list):
             print("*"*40)
 
         elif mode_list[i] == "detach_object":
-            print("*"*40)
             print("task_executer_json.py: detach_object")
             scene.removeAttachedObject(target_task)
             target = content_task
@@ -116,9 +114,10 @@ def task(mode_list, name_list, content_list):
             scene.addBox(target_task, 0.05, 0.05, 0.05, position[0], position[1], position[2], use_service=True)
             time.sleep(5)
             print("*"*40)
+        elif mode_list[i] == "detach_object":
+            scene.removeAttachedObject(target_task)
 
         elif mode_list[i] == "gripper_open":
-            print("*"*40)
             print("task_executer_json.py: gripper_open")
             msg = Float64()
             msg.data = content_task
@@ -127,7 +126,6 @@ def task(mode_list, name_list, content_list):
             print("*"*40)
 
         elif mode_list[i] == "gripper_close":
-            print("*"*40)
             print("task_executer_json.py: gripper_close")
             msg = Float64()
             msg.data = content_task
@@ -136,7 +134,6 @@ def task(mode_list, name_list, content_list):
             print("*"*40)
 
         elif mode_list[i] == "choose_pipeline":
-            print("*"*40)
             print("task_executer_json.py: choose_pipeline")
             print(f"Pipeline: {target_task}")
             print(f"Solver: {content_task}")
@@ -145,13 +142,11 @@ def task(mode_list, name_list, content_list):
             print("*"*40)
 
         elif mode_list[i] == "choose_follow_mode":
-            print("*"*40)
             print("task_executer_json.py: choose_follow_mode")
             print("WARNING! Follow mode is not available in task_executor_json")
             print("*"*40)
 
         elif mode_list[i] == "clear_scene":
-            print("*"*40)
             print("task_executer_json.py: clear_scene")
             scene.clear()
             time.sleep(2)
@@ -159,32 +154,42 @@ def task(mode_list, name_list, content_list):
 
         else:
             print("Content error")
+            print("*"*40)
 
 if __name__ == '__main__':
-    file_path = "/home/vboxuser/catkin_ws/src/frcobot_ros/moveit_python/tasks/fr10/test.json"
-    with open(file_path, 'r') as file:
-        data = json.load(file)
+    if len(sys.argv) < 3: # Assuming TaskGenerator requires three arguments plus the script name
+        if (sys.argv[1]).lower() == "help":
+            print("Usage example:")
+            print("rosrun moveit_python task_executer_json.py fr10 test.json")
+            sys.exit()
+        print("Error usage: rosrun moveit_python task_executer_json.py folder_name file_name")
+        sys.exit()
+    else:
+        _, robot, mode, *arguments = sys.argv
+        if not robot in ["fr3", "fr10"]:
+            print("Error usage: arg1: [fr3, fr10]")
+            sys.exit()
+        if not isinstance(mode, str):
+            print("Error usage: arg2 is not a string")
+            sys.exit()
 
-    mode_list = []
-    name_list = []
-    content_list = []
+        file_path = f"/home/vboxuser/catkin_ws/src/frcobot_ros/moveit_python/tasks/{robot}/{mode}"
+        with open(file_path, 'r') as file:
+            data = json.load(file)
 
-    if isinstance(data, list):
-        for index, item in enumerate(data):
-            for timer, content in item.items():
-                # print(f"\n")
-                for mode, content2 in content.items():
-                    mode_list.append(mode)
-                    for content_name, content3 in content2.items():
-                        name_list.append(content_name)
-                        content_list.append(content3)
-    
-    # print("#"*80)
-    # print(mode_list)
-    # print("#"*80)
-    # print(name_list)
-    # print("#"*80)
-    # print(content_list)
-    # print("#"*80)
-    task(mode_list, name_list, content_list)
-    sys.exit()
+        mode_list = []
+        name_list = []
+        content_list = []
+
+        if isinstance(data, list):
+            for index, item in enumerate(data):
+                for timer, content in item.items():
+                    # print(f"\n")
+                    for mode, content2 in content.items():
+                        mode_list.append(mode)
+                        for content_name, content3 in content2.items():
+                            name_list.append(content_name)
+                            content_list.append(content3)
+
+        task(mode_list, name_list, content_list)
+        sys.exit()
