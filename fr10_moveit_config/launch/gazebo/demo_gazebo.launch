@@ -17,7 +17,7 @@
   This corresponds to moving around the real robot without the use of MoveIt.
   -->
   <arg name="use_gui" default="false" />
-  <arg name="use_rviz" default="false" />
+  <arg name="use_rviz" default="true" />
 
   <!-- Gazebo specific options -->
   <arg name="gazebo_gui" default="false"/>

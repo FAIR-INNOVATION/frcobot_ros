@@ -44,8 +44,8 @@ def task(mode_list, name_list, content_list):
             for joint, position in zip(joint_list, pos_list):
                 print(joint)
                 print(position)
-                # this is wrong content!!!!
-                # move_group_interface.moveToJointPosition(joints=[joint], positions=[position], tolerance=0.01, wait=True)
+            # this is wrong content!!!!
+            # move_group_interface.moveToJointPosition(joints=joint_list, positions=pos_list, tolerance=0.01, wait=True)
 
             time.sleep(5)
             print("*"*40)
