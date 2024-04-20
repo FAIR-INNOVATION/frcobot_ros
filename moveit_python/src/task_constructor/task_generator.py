@@ -248,7 +248,7 @@ class TaskGenerator():
                 listener = TransformListener()
                 listener.waitForTransform("/world", f"/{target}", rospy.Time(), rospy.Duration(5.0))
                 pos, quat = listener.lookupTransform("/world", f"/{target}", rospy.Time())
-                self.bot_move(bot_group_names[0],target,pos[0],pos[1],pos[2],quat[0],quat[1],quat[1],quat[3])
+                self.bot_move(bot_group_names[0],target,pos[0],pos[1],pos[2],quat[0],quat[1],quat[2],quat[3])
                 self.joint_data1[target] = {'position': pos, 'quaternion': quat}
                 self.joint_data2[self.mode] = self.joint_data1
                 self.joint_data3[time.time()] = self.joint_data2

@@ -32,7 +32,8 @@ from geometry_msgs.msg import *
 from moveit_msgs.msg import MoveGroupAction, MoveGroupGoal
 from moveit_msgs.msg import Constraints, JointConstraint, PositionConstraint, OrientationConstraint, BoundingVolume
 from shape_msgs.msg import SolidPrimitive
-
+import math
+import numpy as np
 
 ## @brief Pure python interface to move_group action
 class MoveGroupInterface(object):
@@ -173,12 +174,44 @@ class MoveGroupInterface(object):
         else:
             return None
 
+    def vector_to_quaternion(self, point1, point2):
+        vector = np.array(point2) - np.array(point1)
+        vector_norm = vector / np.linalg.norm(vector)
+        # The z-axis is represented as [0, 0, 1]
+        z_axis = np.array([0, 0, 1])
+        cross_product = np.cross(vector_norm, z_axis)
+        dot_product = np.dot(vector_norm, z_axis)
+
+        w = 1 + dot_product
+        x = cross_product[0]
+        y = cross_product[1]
+        z = cross_product[2]
+        
+        # Normalize the quaternion
+        norm = math.sqrt(w**2 + x**2 + y**2 + z**2)
+        quaternion = np.array([w, x, y, z]) / norm
+        return quaternion
+    
+    def convert2right_vector(self, point1, point2):
+        # Calculate the vector from point1 to point2
+        vector = np.array(point2) - np.array(point1)
+        vector_list = []
+        for i in range(0,3):
+            if i == np.argmax(abs(vector)):
+                vector_list.append(vector[i]/abs(vector[i]))
+            else:
+                vector_list.append(0)
+        # Return the vector and the nearest normal vector
+        return vector_list
+    
     ## @brief Move the arm, based on a goal pose_stamped for the end effector.
     def moveToPose(self,
                    pose_stamped,
                    gripper_frame,
                    tolerance=0.01,
                    wait=True,
+                   rotation_mode=None,
+                   rotation_data=None,
                    **kwargs):
         # Check arguments
         supported_args = ("max_velocity_scaling_factor",
@@ -196,6 +229,46 @@ class MoveGroupInterface(object):
         # Create goal
         g = MoveGroupGoal()
         pose_transformed = self._listener.transformPose(self._fixed_frame, pose_stamped)
+
+        x = pose_transformed.pose.position.x
+        y = pose_transformed.pose.position.y
+        z = pose_transformed.pose.position.z
+
+        point1 = (0, 0, 0)
+        point2 = (x, y, z)
+
+        if rotation_mode==None:
+            pass
+
+        elif rotation_data==None:
+            print("Error! 'rotation_data' is None")
+            sys.exit()
+
+        elif rotation_mode == "3d_right_divided_angle":
+            # rotation_data = [[0,0,0],[1,1,1]]
+            point1 = (rotation_data[0][], rotation_data[0][1], rotation_data[0][2])
+            point2 = (x*rotation_data[1][0], y*rotation_data[1][1], z*rotation_data[1][2])
+
+            vector = self.convert2right_vector(point1,point2)
+            quat = self.vector_to_quaternion(point1,vector)
+            if (math.sqrt(x*x+y*y+z*z) < 0.3) and (z < 0.1):
+                pose_transformed.pose.orientation.x = 0
+                pose_transformed.pose.orientation.y = 0.7071078
+                pose_transformed.pose.orientation.z = 0
+                pose_transformed.pose.orientation.w = 0.7071078
+            else:
+                pose_transformed.pose.orientation.x = quat[1]
+                pose_transformed.pose.orientation.y = quat[2]
+                pose_transformed.pose.orientation.z = quat[3]
+                pose_transformed.pose.orientation.w = quat[0]
+
+        elif rotation_mode == "vector_from_point":
+            # rotation_data = [[0,0,0],[1,0,0]]
+            quaternion = self.vector_to_quaternion(rotation_data[0],rotation_data[1])
+            pose_transformed.pose.orientation.x = quaternion[1]
+            pose_transformed.pose.orientation.y = quaternion[2]
+            pose_transformed.pose.orientation.z = quaternion[3]
+            pose_transformed.pose.orientation.w = quaternion[0]
 
         # 1. fill in request workspace_parameters
 
