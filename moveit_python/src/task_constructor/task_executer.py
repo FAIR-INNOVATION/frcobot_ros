@@ -1,8 +1,5 @@
 #!/usr/bin/env python3
 import rospy
-import actionlib
-from moveit_msgs.msg import MoveItErrorCodes
-from moveit_msgs.msg import PickupAction, PickupGoal, PlaceAction, PlaceGoal
 from geometry_msgs.msg import PoseStamped
 from moveit_python import MoveGroupInterface
 from moveit_python import PickPlaceInterface
@@ -10,8 +7,15 @@ from moveit_python import PlanningSceneInterface
 import time
 import sys
 from std_msgs.msg import Float64
+import moveit_commander
 
 rospy.init_node('pick_and_place_node')
+
+bot = moveit_commander.RobotCommander()
+if not bot.get_group_names()[0] == f"fr10_arm":
+    print(f"Wrong robot name: fr10")
+    sys.exit()
+
 scene = PlanningSceneInterface("/base_link")
 move_group_interface = MoveGroupInterface(group="fr10_arm", frame="world")
 pick_place_interface = PickPlaceInterface(group="fr10_arm", ee_group="gripper")

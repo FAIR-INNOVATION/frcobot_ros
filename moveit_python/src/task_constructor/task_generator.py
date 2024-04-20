@@ -14,10 +14,22 @@ from geometry_msgs.msg import PoseStamped
 from moveit_python import MoveGroupInterface
 from moveit_python import PlanningSceneInterface
 import moveit_commander
+
+END_COORDINATE = "rh_p12_rn_tf_end"
+
 ######################################################################################################
 class TaskGenerator():
     def __init__(self, robot_name, mode, *argv):
         rospy.init_node('task_geberator_node', anonymous=True)
+        
+        self.bot = moveit_commander.RobotCommander()
+        if robot_name == "robot":
+            pass
+        elif not self.bot.get_group_names()[0] == f"{robot_name}_arm":
+            print(f"Wrong robot name: {robot_name}")
+            sys.exit()
+        print(self.bot.get_group_names()[0] )
+        print(f"{robot_name}_arm")
 
         print(f"task_geberator_node: | robot:{robot_name} | mode:{mode} |")
         self.arguments = sys.argv
@@ -93,42 +105,41 @@ class TaskGenerator():
 
     def get_robot_param(self):
         if (len(self.arguments) == 3):
-            bot = moveit_commander.RobotCommander()
             print("*"*80)
             print("get_planning_frame:")
-            print(bot.get_planning_frame())
+            print(self.bot.get_planning_frame())
 
             print("*"*80)
             print("get_robot_markers:")
-            print(bot.get_robot_markers())
+            print(self.bot.get_robot_markers())
 
             print("*"*80)
             print("get_root_link:")
-            print(bot.get_root_link())
+            print(self.bot.get_root_link())
 
             print("*"*80)
             print("get_active_joint_names:")
-            print(bot.get_active_joint_names())
+            print(self.bot.get_active_joint_names())
 
             print("*"*80)
             print("get_joint_names:")
-            print(bot.get_joint_names())
+            print(self.bot.get_joint_names())
 
             print("*"*80)
             print("get_link_names:")
-            print(bot.get_link_names())
+            print(self.bot.get_link_names())
 
             print("*"*80)
             print("get_group_names:")
-            print(bot.get_group_names())
+            print(self.bot.get_group_names())
 
             print("*"*80)
             print("get_current_state:")
-            print(bot.get_current_state())
+            print(self.bot.get_current_state())
 
             print("*"*80)
             print("get_current_variable_values:")
-            print(bot.get_current_variable_values())
+            print(self.bot.get_current_variable_values())
         else:
             print("Arguments error")
             print("Example: rosrun moveit_python task_generator.py robot get_robot_param")
@@ -255,9 +266,9 @@ class TaskGenerator():
                             last_obj = value['spawn_object'][target]
                 # Check if a spawn_object was found and print its coordinates
                 if last_obj:
-                    self.bot_move(bot_group_names[0],"rh_p12_rn_tf_end",last_obj['x'],last_obj['y'],last_obj['z'],0,0,0,1)
+                    self.bot_move(bot_group_names[0],END_COORDINATE,last_obj['x'],last_obj['y'],last_obj['z'],0,0,0,1)
                     print(f"Last spawn_object coordinates: {target} x={last_obj['x']}, y={last_obj['y']}, z={last_obj['z']}")
-                    self.joint_data1[target] = {'position': [last_obj['x'],last_obj['y'],last_obj['z']], 'quaternion': [0,0,0,1]}
+                    self.joint_data1[END_COORDINATE] = {'position': [last_obj['x'],last_obj['y'],last_obj['z']], 'quaternion': [0,0,0,1]}
                     self.joint_data2[self.mode] = self.joint_data1
                     self.joint_data3[time.time()] = self.joint_data2
                     self.save_json(self.joint_data3)
@@ -297,7 +308,7 @@ class TaskGenerator():
         if len(self.arguments) == 5:
             if self.task_executer:
                 scene = PlanningSceneInterface("/base_link")
-                scene.attachBox(self.arguments[3], 0.05, 0.05, 0.05, 0, 0, 0, "rh_p12_rn_tf_end")
+                scene.attachBox(self.arguments[3], 0.05, 0.05, 0.05, 0, 0, 0, END_COORDINATE)
             self.joint_data1[self.arguments[3]] = self.arguments[4]
             self.joint_data2[self.mode] = self.joint_data1
             self.joint_data3[time.time()] = self.joint_data2
@@ -457,8 +468,7 @@ class TaskGenerator():
             print(f"Invalid JSON files: {invalid_json_files}")
             print("#"*80)
             print("WARNING: This module can only briefly check your json file. Be sure to check everything manually.")
-            print("#"*80)
-            print("check_json_files finished")
+            print("Check_json_files finished!")
             sys.exit()
         else:
             print("Arguments error")
@@ -495,7 +505,7 @@ if __name__ == "__main__":
     if len(sys.argv) < 3: # Assuming TaskGenerator requires three arguments plus the script name
         if (sys.argv[1]).lower() == "help":
             print("Usage example:")
-            print("rosrun moveit_python task_generator.py get_robot_param")
+            print("rosrun moveit_python task_generator.py robot get_robot_param")
             print("rosrun moveit_python task_generator.py fr10 joints_position")
             print("rosrun moveit_python task_generator.py fr10 joints_position 0 0 0 0 0 0")
             print("rosrun moveit_python task_generator.py fr10 end_coordinate rh_p12_rn_tf_end")

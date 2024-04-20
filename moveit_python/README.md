@@ -6,7 +6,7 @@ rosrun moveit_python task_executer.py
 ```
 2. Use generator example
 ```bash
-rosrun moveit_python task_generator.py get_robot_param
+rosrun moveit_python task_generator.py robot get_robot_param
 rosrun moveit_python task_generator.py fr10 joints_position
 rosrun moveit_python task_generator.py fr10 joints_position 0 0 0 0 0 0
 rosrun moveit_python task_generator.py fr10 end_coordinate rh_p12_rn_tf_end
@@ -27,7 +27,7 @@ rosrun moveit_python task_generator.py fr10 detele_json_sim_content test.json
 Pick and place example:
 0 `rosrun moveit_python task_generator.py fr10 clear_scene`
 1 `rosrun moveit_python task_generator.py fr10 remove_object hello_box`
-2 `rosrun moveit_python task_generator.py fr10 joints_position`
+2 `rosrun moveit_python task_generator.py fr10 joints_position 0 -1.57 1.57 0 0 0`
 3 `rosrun moveit_python task_generator.py fr10 spawn_object hello_box 0 0.5 0.2`
 4 `rosrun moveit_python task_generator.py fr10 choose_pipeline OMPL RRTConnect`
 5 `rosrun moveit_python task_generator.py fr10 end_coordinate hello_box`
@@ -45,3 +45,6 @@ Pick and place example:
 ```bash
 rosrun moveit_python task_executer_json.py fr10 task_grip_sim.json
 ```
+
+1) Remove time delay
+2) add 6 DOF generator
