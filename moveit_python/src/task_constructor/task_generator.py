@@ -15,7 +15,7 @@ from moveit_python import MoveGroupInterface
 from moveit_python import PlanningSceneInterface
 import moveit_commander
 
-END_COORDINATE = "rh_p12_rn_tf_end"
+END_COORDINATE = "tf_end"
 
 ######################################################################################################
 class TaskGenerator():
@@ -24,12 +24,11 @@ class TaskGenerator():
         
         self.bot = moveit_commander.RobotCommander()
         if robot_name == "robot":
-            pass
+            robot_name = self.bot.get_group_names()[0]
+            robot_name = robot_name.replace("_arm", "")
         elif not self.bot.get_group_names()[0] == f"{robot_name}_arm":
             print(f"Wrong robot name: {robot_name}")
             sys.exit()
-        print(self.bot.get_group_names()[0] )
-        print(f"{robot_name}_arm")
 
         print(f"task_geberator_node: | robot:{robot_name} | mode:{mode} |")
         self.arguments = sys.argv
@@ -178,8 +177,7 @@ class TaskGenerator():
                     task_joints.append(name_list[i-3])
                     task_positions.append(float(self.arguments[i]))
                 if self.task_executer:
-                    bot = moveit_commander.RobotCommander()
-                    group_names = bot.get_group_names()
+                    group_names = self.bot.get_group_names()
                     move_group_interface = MoveGroupInterface(group=group_names[0], frame="world")
                     move_group_interface.moveToJointPosition(joints=task_joints, positions=task_positions, tolerance=0.01, wait=True)
                     time.sleep(5)
@@ -220,9 +218,8 @@ class TaskGenerator():
             print(f"Argument is {target}")
             
             scene = PlanningSceneInterface("base_link")
-            bot = moveit_commander.RobotCommander()
-            bot_link_names = bot.get_link_names()
-            bot_group_names = bot.get_group_names()
+            bot_link_names = self.bot.get_link_names()
+            bot_group_names = self.bot.get_group_names()
             print("Link names:", bot_link_names)
 
             self.subscriber = rospy.Subscriber("/joint_states", JointState, self.joints_position_callback)
@@ -280,7 +277,7 @@ class TaskGenerator():
 
         else:
             print("Arguments error")
-            print("Example: rosrun moveit_python task_generator.py fr10 end_coordinate rh_p12_rn_tf_end")
+            print("Example: rosrun moveit_python task_generator.py fr10 end_coordinate tf_end")
             print("Example: rosrun moveit_python task_generator.py fr10 end_coordinate hello_box")
         sys.exit()
     
@@ -317,7 +314,7 @@ class TaskGenerator():
             sys.exit()
         else:
             print("Arguments error")
-            print("Example: rosrun moveit_python task_generator.py fr10 attach_object hello_box rh_p12_rn_tf_end")
+            print("Example: rosrun moveit_python task_generator.py fr10 attach_object hello_box tf_end")
             sys.exit()
 
     def detach_object(self):
@@ -341,7 +338,7 @@ class TaskGenerator():
             sys.exit()
         else:
             print("Arguments error")
-            print("Example: rosrun moveit_python task_generator.py fr10 detach_object hello_box rh_p12_rn_tf_end")
+            print("Example: rosrun moveit_python task_generator.py fr10 detach_object hello_box tf_end")
             sys.exit()
             
     def remove_object(self):
@@ -378,11 +375,15 @@ class TaskGenerator():
             sub = rospy.Subscriber('/rh_p12_rn_position/state', JointControllerState, self.gripper_callback)
             msg = Float64()
             msg.data = value
-            rate = rospy.Rate(10)
+            last_time = time.time()
             while not rospy.is_shutdown():
                 rospy.loginfo(f"Publishing: {msg.data}")
                 pub.publish(msg)
                 print(f"Feedback: {self.position}")
+                if self.position is None:
+                    if time.time() - last_time > 0.5:
+                        print("No gripper founded")
+                        sys.exit()
                 if self.position == msg.data:
                     break
                 self.rate.sleep()
@@ -401,10 +402,15 @@ class TaskGenerator():
             sub = rospy.Subscriber('/rh_p12_rn_position/state', JointControllerState, self.gripper_callback)
             msg = Float64()
             msg.data = value
+            last_time = time.time()
             while not rospy.is_shutdown():
                 rospy.loginfo(f"Publishing: {msg.data}")
                 pub.publish(msg)
                 print(f"Feedback: {self.position}")
+                if self.position is None:
+                    if time.time() - last_time > 0.5:
+                        print("No gripper founded")
+                        sys.exit()
                 if self.position == msg.data:
                     break
                 self.rate.sleep()
@@ -508,11 +514,11 @@ if __name__ == "__main__":
             print("rosrun moveit_python task_generator.py robot get_robot_param")
             print("rosrun moveit_python task_generator.py fr10 joints_position")
             print("rosrun moveit_python task_generator.py fr10 joints_position 0 0 0 0 0 0")
-            print("rosrun moveit_python task_generator.py fr10 end_coordinate rh_p12_rn_tf_end")
+            print("rosrun moveit_python task_generator.py fr10 end_coordinate tf_end")
             print("rosrun moveit_python task_generator.py fr10 end_coordinate hello_box")
             print("rosrun moveit_python task_generator.py fr10 spawn_object hello_box 0 0.5 0.2")
-            print("rosrun moveit_python task_generator.py fr10 attach_object hello_box rh_p12_rn_tf_end")
-            print("rosrun moveit_python task_generator.py fr10 detach_object hello_box rh_p12_rn_tf_end")
+            print("rosrun moveit_python task_generator.py fr10 attach_object hello_box tf_end")
+            print("rosrun moveit_python task_generator.py fr10 detach_object hello_box tf_end")
             print("rosrun moveit_python task_generator.py fr10 remove_object hello_box")
             print("rosrun moveit_python task_generator.py fr10 clear_scene")
             print("rosrun moveit_python task_generator.py fr10 gripper_open")

@@ -122,7 +122,7 @@ Visualization Manager:
             Show Axes: false
             Show Trail: false
             Value: true
-          rh_p12_rn_tf_end:
+          tf_end:
             Alpha: 1
             Show Axes: false
             Show Trail: false
@@ -250,7 +250,7 @@ Visualization Manager:
             Show Axes: false
             Show Trail: false
             Value: true
-          rh_p12_rn_tf_end:
+          tf_end:
             Alpha: 1
             Show Axes: false
             Show Trail: false
@@ -327,7 +327,7 @@ Visualization Manager:
           Value: false
         rh_p12_rn_r2:
           Value: false
-        rh_p12_rn_tf_end:
+        tf_end:
           Value: true
         shoulder_Link:
           Value: true
@@ -367,7 +367,7 @@ Visualization Manager:
                           rh_p12_rn_r1:
                             rh_p12_rn_r2:
                               {}
-                        rh_p12_rn_tf_end:
+                        tf_end:
                           {}
           ground_plane_box:
             {}

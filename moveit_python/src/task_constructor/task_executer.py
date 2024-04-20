@@ -26,7 +26,7 @@ def spawn_obj(x,y,z):
     scene.addBox("hello_box", 0.05, 0.05, 0.05, x, y, z, use_service=True)
 
 def attach_obj():
-    scene.attachBox("hello_box", 0.05, 0.05, 0.05, 0, 0, 0, "rh_p12_rn_tf_end")
+    scene.attachBox("hello_box", 0.05, 0.05, 0.05, 0, 0, 0, "tf_end")
         
 def remove_obj_all():
     scene.clear()
@@ -86,7 +86,7 @@ def task():
     pick_pose.pose.position.y = y
     pick_pose.pose.position.z = z
     pick_pose.pose.orientation.w = 1.0
-    result = move_group_interface.moveToPose(pick_pose, gripper_frame="rh_p12_rn_tf_end", tolerance=0.01, wait=True)
+    result = move_group_interface.moveToPose(pick_pose, gripper_frame="tf_end", tolerance=0.01, wait=True)
     if result.error_code.val < 1:
         print(f"task_executer.py Error: {result.error_code}")
         sys.exit()
@@ -106,7 +106,7 @@ def task():
     place_pose.pose.position.y = y
     place_pose.pose.position.z = z+0.3
     place_pose.pose.orientation.w = 1.0
-    result = move_group_interface.moveToPose(place_pose, gripper_frame="rh_p12_rn_tf_end", tolerance=0.01, wait=True, max_velocity_scaling_factor=0.1, max_acceleration_scaling_factor=0.1)
+    result = move_group_interface.moveToPose(place_pose, gripper_frame="tf_end", tolerance=0.01, wait=True, max_velocity_scaling_factor=0.1, max_acceleration_scaling_factor=0.1)
 
     if result.error_code.val < 1:
         print(f"task_executer.py Error: {result.error_code}")

@@ -461,4 +461,19 @@
       k_position="100"
       k_velocity="40" />
   </joint>
+
+  <link name="tf_end">
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <inertial>
+          <origin xyz="0 0 0" rpy="0 0 0" />
+          <mass value="0.01" />
+          <inertia ixx="0.0001" ixy="9.9865E-08" ixz="7.787E-08" iyy="0.0001" iyz="6.6716E-08" izz="0.0001" />
+      </inertial>
+  </link>
+  <joint name="r_tf_end" type="fixed">
+      <parent link="wrist3_Link"/>
+      <child link="tf_end"/>
+      <origin xyz="0.0 0.15 0.0" rpy="-1.57 0 1.57"/>
+  </joint>
+
 </robot>

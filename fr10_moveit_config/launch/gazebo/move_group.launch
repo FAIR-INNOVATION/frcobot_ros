@@ -13,6 +13,12 @@
 
   <!-- move_group settings -->
   <arg name="allow_trajectory_execution" default="true"/>
+  <arg name="allow_sensor" default="false"/>
+
+  <arg name="allow_execution_and_sensor" default="false"/>
+  <arg if="$(arg allow_sensor)" name="allow_execution_and_sensor" default="true"/>
+  <arg unless="$(arg allow_trajectory_execution)" name="allow_execution_and_sensor" default="false"/>
+  
   <arg name="fake_execution" default="false"/>
   <arg name="max_safe_path_cost" default="1"/>
   <arg name="jiggle_fraction" default="0.05" />
@@ -67,7 +73,7 @@
   </include>
 
   <!-- Sensors Functionality -->
-  <include ns="move_group" file="$(find fr10_moveit_config)/launch/gazebo/sensor_manager.launch.xml" if="$(arg allow_trajectory_execution)">
+  <include ns="move_group" file="$(find fr10_moveit_config)/launch/gazebo/sensor_manager.launch.xml" if="$(arg allow_execution_and_sensor)">
     <arg name="moveit_sensor_manager" value="FR10-V5.0.SLDASM" />
   </include>
 

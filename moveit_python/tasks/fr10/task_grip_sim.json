@@ -48,7 +48,7 @@
     {
      "1713508374.7976346": {
       "end_coordinate": {
-       "rh_p12_rn_tf_end": {
+       "tf_end": {
         "position": [
          0.0,
          0.5,
@@ -67,7 +67,7 @@
     {
      "1713508401.783227": {
       "attach_object": {
-       "hello_box": "rh_p12_rn_tf_end"
+       "hello_box": "tf_end"
       }
      }
     },
@@ -88,7 +88,7 @@
     {
      "1713508490.135554": {
       "end_coordinate": {
-       "rh_p12_rn_tf_end": {
+       "tf_end": {
         "position": [
          -2.439050759228331e-05,
          0.49885418865839487,
@@ -114,7 +114,7 @@
     {
      "1713508525.788454": {
       "detach_object": {
-       "hello_box": "rh_p12_rn_tf_end"
+       "hello_box": "tf_end"
       }
      }
     },
