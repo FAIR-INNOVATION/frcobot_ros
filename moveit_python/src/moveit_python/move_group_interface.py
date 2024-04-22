@@ -246,7 +246,7 @@ class MoveGroupInterface(object):
 
         elif rotation_mode == "3d_right_divided_angle":
             # rotation_data = [[0,0,0],[1,1,1]]
-            point1 = (rotation_data[0][], rotation_data[0][1], rotation_data[0][2])
+            point1 = (rotation_data[0][0], rotation_data[0][1], rotation_data[0][2])
             point2 = (x*rotation_data[1][0], y*rotation_data[1][1], z*rotation_data[1][2])
 
             vector = self.convert2right_vector(point1,point2)

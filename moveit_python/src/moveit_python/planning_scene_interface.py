@@ -319,9 +319,13 @@ class PlanningSceneInterface(object):
     ## @param x The x position in fixed frame
     ## @param y The y position in fixed frame
     ## @param z The z position in fixed frame
+    ## @param rx The x orientation in link_name frame
+    ## @param ry The y orientation in link_name frame
+    ## @param rz The z orientation in link_name frame
+    ## @param r2 The z orientation in link_name frame
     ## @param use_service If true, update will be sent via apply service
     ## @param frame_id Optional frame for the pose, otherwise fixed_frame is used
-    def addBox(self, name, size_x, size_y, size_z, x, y, z, use_service=True, frame_id=None):
+    def addBox(self, name, size_x, size_y, size_z, x, y, z, rx=0.0, ry=0.0, rz=0.0, rw=1.0, use_service=True, frame_id=None):
         s = SolidPrimitive()
         s.dimensions = [size_x, size_y, size_z]
         s.type = s.BOX
@@ -331,7 +335,10 @@ class PlanningSceneInterface(object):
         ps.pose.position.x = x
         ps.pose.position.y = y
         ps.pose.position.z = z
-        ps.pose.orientation.w = 1.0
+        ps.pose.orientation.x = rx
+        ps.pose.orientation.y = ry
+        ps.pose.orientation.z = rz
+        ps.pose.orientation.w = rw
 
         self.addSolidPrimitive(name, s, ps.pose, use_service, frame_id)
 
@@ -343,10 +350,14 @@ class PlanningSceneInterface(object):
     ## @param x The x position in link_name frame
     ## @param y The y position in link_name frame
     ## @param z The z position in link_name frame
+    ## @param rx The x orientation in link_name frame
+    ## @param ry The y orientation in link_name frame
+    ## @param rz The z orientation in link_name frame
+    ## @param r2 The z orientation in link_name frame
     ## @param link_name Name of link to attach this object to
     ## @param touch_links Names of robot links that can touch this object
     ## @param use_service If true, update will be sent via apply service
-    def attachBox(self, name, size_x, size_y, size_z, x, y, z, link_name,
+    def attachBox(self, name, size_x, size_y, size_z, x, y, z, rx=0.0, ry=0.0, rz=0.0, rw=1.0, link_name=None,
                   touch_links=None, detach_posture=None, weight=0.0,
                   use_service=True):
         s = SolidPrimitive()
@@ -357,7 +368,10 @@ class PlanningSceneInterface(object):
         p.position.x = x
         p.position.y = y
         p.position.z = z
-        p.orientation.w = 1.0
+        p.orientation.x = rx
+        p.orientation.y = ry
+        p.orientation.z = rz
+        p.orientation.w = rw
         o = self.makeSolidPrimitive(name, s, p)
         o.header.frame_id = link_name
         a = self.makeAttached(link_name, o, touch_links, detach_posture, weight)

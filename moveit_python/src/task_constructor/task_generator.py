@@ -263,9 +263,9 @@ class TaskGenerator():
                             last_obj = value['spawn_object'][target]
                 # Check if a spawn_object was found and print its coordinates
                 if last_obj:
-                    self.bot_move(bot_group_names[0],END_COORDINATE,last_obj['x'],last_obj['y'],last_obj['z'],0,0,0,1)
+                    self.bot_move(bot_group_names[0],END_COORDINATE,last_obj['x'],last_obj['y'],last_obj['z'],last_obj['rx'],last_obj['ry'],last_obj['rz'],last_obj['rw'])
                     print(f"Last spawn_object coordinates: {target} x={last_obj['x']}, y={last_obj['y']}, z={last_obj['z']}")
-                    self.joint_data1[END_COORDINATE] = {'position': [last_obj['x'],last_obj['y'],last_obj['z']], 'quaternion': [0,0,0,1]}
+                    self.joint_data1[END_COORDINATE] = {'position': [last_obj['x'],last_obj['y'],last_obj['z']], 'quaternion': [last_obj['rx'],last_obj['ry'],last_obj['rz'],last_obj['rw']]}
                     self.joint_data2[self.mode] = self.joint_data1
                     self.joint_data3[time.time()] = self.joint_data2
                     self.save_json(self.joint_data3)
@@ -274,23 +274,50 @@ class TaskGenerator():
                     print(f"No spawn_object with the name {target} found in the JSON data.")
             else:
                 print(f"There's no name '{target}' founded.")
+        elif len(self.arguments) == 11:
+            bot_link_names = self.bot.get_link_names()
+            bot_group_names = self.bot.get_group_names()
+            target = str(self.arguments[3])
 
+            link_trigger = False
+            if target in bot_link_names:
+                link_trigger = True
+            if link_trigger:
+                pos = []
+                quat = []
+                for i in range(4,7):
+                    pos.append(float(self.arguments[i]))
+                for i in range(7,11):
+                    quat.append(float(self.arguments[i]))
+                print(f"Argument is {target}")
+                self.bot_move(bot_group_names[0],target,pos[0],pos[1],pos[2],quat[0],quat[1],quat[2],quat[3])
+                self.joint_data1[END_COORDINATE] = {'position': [pos[0],pos[1],pos[2]], 'quaternion': [quat[0],quat[1],quat[2],quat[3]]}
+                self.joint_data2[self.mode] = self.joint_data1
+                self.joint_data3[time.time()] = self.joint_data2
+                self.save_json(self.joint_data3)
+                print("end_coordinate finished")
+            else:
+                print(f"There's no name '{target}' founded.")
         else:
             print("Arguments error")
             print("Example: rosrun moveit_python task_generator.py fr10 end_coordinate tf_end")
+            print("Example: rosrun moveit_python task_generator.py fr10 end_coordinate tf_end 0 0.3 0.2 0 0 0 1")
             print("Example: rosrun moveit_python task_generator.py fr10 end_coordinate hello_box")
         sys.exit()
     
     def spawn_object(self):
-        if len(self.arguments) == 7:
+        if len(self.arguments) == 11:
             xyz = [0,0,0]
-            for i in range(4,len(self.arguments)):
-                print(self.arguments[i])
+            rot = [0,0,0,1]
+            for i in range(4,7):
                 xyz[i-4]=float(self.arguments[i])
+            for i in range(7,11):
+                rot[i-7]=float(self.arguments[i])
+            print(f"Spawn object: {self.arguments[3]} {xyz} {rot}")
             if self.task_executer:
                 scene = PlanningSceneInterface("/base_link")
-                scene.addBox(self.arguments[3], 0.05, 0.05, 0.05, xyz[0], xyz[1], xyz[2], use_service=True)
-            self.joint_data1[self.arguments[3]] = {'x':xyz[0],'y':xyz[1],'z':xyz[2]}
+                scene.addBox(self.arguments[3], 0.05, 0.05, 0.05, xyz[0], xyz[1], xyz[2], rot[0], rot[1], rot[2], rot[3], use_service=True)
+            self.joint_data1[self.arguments[3]] = {'x':xyz[0],'y':xyz[1],'z':xyz[2], 'rx':rot[0],'ry':rot[1],'rz':rot[2], 'rw':rot[3]}
             self.joint_data2[self.mode] = self.joint_data1
             self.joint_data3[time.time()] = self.joint_data2
             self.save_json(self.joint_data3)
@@ -298,14 +325,17 @@ class TaskGenerator():
             sys.exit()
         else:
             print("Arguments error")
-            print("Example: rosrun moveit_python task_generator.py fr10 spawn_object hello_box 0 0.5 0.2")
+            print("Example: rosrun moveit_python task_generator.py fr10 spawn_object hello_box 0 0.5 0.2 0 0 0 1")
             sys.exit()
 
     def attach_object(self):
         if len(self.arguments) == 5:
             if self.task_executer:
                 scene = PlanningSceneInterface("/base_link")
-                scene.attachBox(self.arguments[3], 0.05, 0.05, 0.05, 0, 0, 0, END_COORDINATE)
+                if (len(scene.getKnownCollisionObjects()) == 0):
+                    print("Error! No object to attach")
+                    sys.exit()
+                scene.attachBox(self.arguments[3], 0.05, 0.05, 0.05, 0, 0, 0, link_name=END_COORDINATE)
             self.joint_data1[self.arguments[3]] = self.arguments[4]
             self.joint_data2[self.mode] = self.joint_data1
             self.joint_data3[time.time()] = self.joint_data2
@@ -321,17 +351,26 @@ class TaskGenerator():
         if len(self.arguments) == 5:
             if self.task_executer:
                 scene = PlanningSceneInterface("/base_link")
+                if (len(scene.getKnownAttachedObjects()) == 0):
+                    print("Error! No attached object")
+                    sys.exit()
                 scene.removeAttachedObject(self.arguments[3])
-
                 target = self.arguments[4]
                 print(f"Argument is {target}")
                 listener = TransformListener()
                 listener.waitForTransform("/world", f"/{target}", rospy.Time(), rospy.Duration(5.0))
-                position, quaternion = listener.lookupTransform("/world", f"/{target}", rospy.Time())
+                pos, quat = listener.lookupTransform("/world", f"/{target}", rospy.Time())
                 time.sleep(5)
-                scene.addBox(self.arguments[3], 0.05, 0.05, 0.05, position[0], position[1], position[2], use_service=True)
+                scene.addBox(self.arguments[3], 0.05, 0.05, 0.05, pos[0], pos[1], pos[2], quat[0], quat[1], quat[2], quat[3], use_service=True)
             self.joint_data1[self.arguments[3]] = self.arguments[4]
             self.joint_data2[self.mode] = self.joint_data1
+            self.joint_data3[time.time()] = self.joint_data2
+            self.save_json(self.joint_data3)
+            self.joint_data1 = {}
+            self.joint_data2 = {}
+            self.joint_data3 = {}
+            self.joint_data1[self.arguments[3]] = {'x':pos[0],'y':pos[1],'z':pos[2], 'rx':quat[0],'ry':quat[1],'rz':quat[2], 'rw':quat[3]}
+            self.joint_data2["spawn_object"] = self.joint_data1
             self.joint_data3[time.time()] = self.joint_data2
             self.save_json(self.joint_data3)
             print("detach_object finished")
@@ -509,26 +548,28 @@ class TaskGenerator():
 
 if __name__ == "__main__":
     if len(sys.argv) < 3: # Assuming TaskGenerator requires three arguments plus the script name
-        if (sys.argv[1]).lower() == "help":
-            print("Usage example:")
-            print("rosrun moveit_python task_generator.py robot get_robot_param")
-            print("rosrun moveit_python task_generator.py fr10 joints_position")
-            print("rosrun moveit_python task_generator.py fr10 joints_position 0 0 0 0 0 0")
-            print("rosrun moveit_python task_generator.py fr10 end_coordinate tf_end")
-            print("rosrun moveit_python task_generator.py fr10 end_coordinate hello_box")
-            print("rosrun moveit_python task_generator.py fr10 spawn_object hello_box 0 0.5 0.2")
-            print("rosrun moveit_python task_generator.py fr10 attach_object hello_box tf_end")
-            print("rosrun moveit_python task_generator.py fr10 detach_object hello_box tf_end")
-            print("rosrun moveit_python task_generator.py fr10 remove_object hello_box")
-            print("rosrun moveit_python task_generator.py fr10 clear_scene")
-            print("rosrun moveit_python task_generator.py fr10 gripper_open")
-            print("rosrun moveit_python task_generator.py fr10 gripper_close")
-            print("rosrun moveit_python task_generator.py fr10 choose_pipeline OMPL RRTConnect")
-            print("rosrun moveit_python task_generator.py fr10 choose_pipeline PILZ LIN")
-            print("rosrun moveit_python task_generator.py fr10 choose_follow_mode")
-            print("rosrun moveit_python task_generator.py fr10 check_json_files")
-            print("rosrun moveit_python task_generator.py fr10 detele_json_sim_content test.json")
-            sys.exit()
+        if len(sys.argv) == 2:
+            if (sys.argv[1]).lower() == "help":
+                print("Usage example:")
+                print("rosrun moveit_python task_generator.py robot get_robot_param")
+                print("rosrun moveit_python task_generator.py fr10 joints_position")
+                print("rosrun moveit_python task_generator.py fr10 joints_position 0 0 0 0 0 0")
+                print("rosrun moveit_python task_generator.py fr10 end_coordinate tf_end")
+                print("rosrun moveit_python task_generator.py fr10 end_coordinate tf_end 0 0.3 0.2 0 0 0 1")
+                print("rosrun moveit_python task_generator.py fr10 end_coordinate hello_box")
+                print("rosrun moveit_python task_generator.py fr10 spawn_object hello_box 0 0.5 0.2 0 0.707 0 0.707")
+                print("rosrun moveit_python task_generator.py fr10 attach_object hello_box tf_end")
+                print("rosrun moveit_python task_generator.py fr10 detach_object hello_box tf_end")
+                print("rosrun moveit_python task_generator.py fr10 remove_object hello_box")
+                print("rosrun moveit_python task_generator.py fr10 clear_scene")
+                print("rosrun moveit_python task_generator.py fr10 gripper_open")
+                print("rosrun moveit_python task_generator.py fr10 gripper_close")
+                print("rosrun moveit_python task_generator.py fr10 choose_pipeline OMPL RRTConnect")
+                print("rosrun moveit_python task_generator.py fr10 choose_pipeline PILZ LIN")
+                print("rosrun moveit_python task_generator.py fr10 choose_follow_mode")
+                print("rosrun moveit_python task_generator.py fr10 check_json_files")
+                print("rosrun moveit_python task_generator.py fr10 detele_json_sim_content test.json")
+                sys.exit()
         print("Error usage: rosrun moveit_python task_generator.py arg1 arg2 arg3 arg4 etc..")
         sys.exit()
     else:

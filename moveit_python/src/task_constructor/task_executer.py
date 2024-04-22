@@ -26,7 +26,7 @@ def spawn_obj(x,y,z):
     scene.addBox("hello_box", 0.05, 0.05, 0.05, x, y, z, use_service=True)
 
 def attach_obj():
-    scene.attachBox("hello_box", 0.05, 0.05, 0.05, 0, 0, 0, "tf_end")
+    scene.attachBox("hello_box", 0.05, 0.05, 0.05, 0, 0, 0, link_name="tf_end")
         
 def remove_obj_all():
     scene.clear()

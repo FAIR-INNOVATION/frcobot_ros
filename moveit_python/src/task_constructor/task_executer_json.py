@@ -66,26 +66,18 @@ def task(mode_list, name_list, content_list):
             for axis, value in content_list[i].items():
                 axis_list.append(axis)
                 value_list.append(float(value))
-            scene.addBox(name_list[i], 0.05, 0.05, 0.05, value_list[0], value_list[1], value_list[2], use_service=True)
+            scene.addBox(name_list[i], 0.05, 0.05, 0.05, value_list[0], value_list[1], value_list[2], value_list[3], value_list[4], value_list[5], value_list[6], use_service=True)
             time.sleep(5)
             print("-"*40)
 
         elif mode_list[i] == "attach_object":
             print(f"'{name_list[i]}' attached to '{content_list[i]}'")
-            scene.attachBox(name_list[i], 0.05, 0.05, 0.05, 0, 0, 0, content_list[i])
+            scene.attachBox(name_list[i], 0.05, 0.05, 0.05, 0, 0, 0, link_name=content_list[i])
             time.sleep(5)
             print("-"*40)
 
         elif mode_list[i] == "detach_object":
             scene.removeAttachedObject(name_list[i])
-            target = content_list[i]
-            # print(f"Argument is {target}")
-            listener = TransformListener()
-            listener.waitForTransform("/world", f"/{target}", rospy.Time(), rospy.Duration(5.0))
-            position, quaternion = listener.lookupTransform("/world", f"/{target}", rospy.Time())
-            print(f"'{name_list[i]}' is detached of the '{content_list[i]}' at the coordinate: {list(np.round(position, 2))}")
-            time.sleep(5)
-            scene.addBox(name_list[i], 0.05, 0.05, 0.05, position[0], position[1], position[2], use_service=True)
             time.sleep(5)
             print("-"*40)
 
@@ -141,10 +133,11 @@ def task(mode_list, name_list, content_list):
 
 if __name__ == '__main__':
     if len(sys.argv) < 3: # Assuming TaskGenerator requires three arguments plus the script name
-        if (sys.argv[1]).lower() == "help":
-            print("Usage example:")
-            print("rosrun moveit_python task_executer_json.py fr10 test.json")
-            sys.exit()
+        if len(sys.argv) == 2:
+            if (sys.argv[1]).lower() == "help":
+                print("Usage example:")
+                print("rosrun moveit_python task_executer_json.py fr10 test.json")
+                sys.exit()
         print("Error usage: rosrun moveit_python task_executer_json.py folder_name file_name")
         sys.exit()
     else:
