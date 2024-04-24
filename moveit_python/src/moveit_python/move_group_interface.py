@@ -237,39 +237,39 @@ class MoveGroupInterface(object):
         point1 = (0, 0, 0)
         point2 = (x, y, z)
 
-        if rotation_mode==None:
-            pass
+        # if rotation_mode==None:
+        #     pass
+        # elif rotation_data==None:
+        #     print("Error! 'rotation_data' is None")
+        #     sys.exit()
+        # elif rotation_mode == "right_angle":
+        #     # rotation_data = [[0,0,0],[1,1,1]]
+        #     point1 = (rotation_data[0][0], rotation_data[0][1], rotation_data[0][2])
+        #     point2 = (x*rotation_data[1][0], y*rotation_data[1][1], z*rotation_data[1][2])
 
-        elif rotation_data==None:
-            print("Error! 'rotation_data' is None")
-            sys.exit()
-
-        elif rotation_mode == "3d_right_divided_angle":
-            # rotation_data = [[0,0,0],[1,1,1]]
-            point1 = (rotation_data[0][0], rotation_data[0][1], rotation_data[0][2])
-            point2 = (x*rotation_data[1][0], y*rotation_data[1][1], z*rotation_data[1][2])
-
-            vector = self.convert2right_vector(point1,point2)
-            quat = self.vector_to_quaternion(point1,vector)
-            if (math.sqrt(x*x+y*y+z*z) < 0.3) and (z < 0.1):
-                pose_transformed.pose.orientation.x = 0
-                pose_transformed.pose.orientation.y = 0.7071078
-                pose_transformed.pose.orientation.z = 0
-                pose_transformed.pose.orientation.w = 0.7071078
-            else:
-                pose_transformed.pose.orientation.x = quat[1]
-                pose_transformed.pose.orientation.y = quat[2]
-                pose_transformed.pose.orientation.z = quat[3]
-                pose_transformed.pose.orientation.w = quat[0]
-
-        elif rotation_mode == "vector_from_point":
-            # rotation_data = [[0,0,0],[1,0,0]]
-            quaternion = self.vector_to_quaternion(rotation_data[0],rotation_data[1])
-            pose_transformed.pose.orientation.x = quaternion[1]
-            pose_transformed.pose.orientation.y = quaternion[2]
-            pose_transformed.pose.orientation.z = quaternion[3]
-            pose_transformed.pose.orientation.w = quaternion[0]
-
+        #     vector = self.convert2right_vector(point1,point2)
+        #     quat = self.vector_to_quaternion(point1,vector)
+        #     if (math.sqrt(x*x+y*y+z*z) < 0.3) and (z < 0.1):
+        #         pose_transformed.pose.orientation.x = 0
+        #         pose_transformed.pose.orientation.y = 0.7071078
+        #         pose_transformed.pose.orientation.z = 0
+        #         pose_transformed.pose.orientation.w = 0.7071078
+        #     else:
+        #         pose_transformed.pose.orientation.x = quat[1]
+        #         pose_transformed.pose.orientation.y = quat[2]
+        #         pose_transformed.pose.orientation.z = quat[3]
+        #         pose_transformed.pose.orientation.w = quat[0]
+        # elif rotation_mode == "vector2point":
+        #     # rotation_data = [[0,0,0],[1,0,0]]
+        #     quaternion = self.vector_to_quaternion(rotation_data[0],rotation_data[1])
+        #     pose_transformed.pose.orientation.x = quaternion[1]
+        #     pose_transformed.pose.orientation.y = quaternion[2]
+        #     pose_transformed.pose.orientation.z = quaternion[3]
+        #     pose_transformed.pose.orientation.w = quaternion[0]
+        # else:
+        #     print("rotation_mode error")
+        #     sys.exit()
+            
         # 1. fill in request workspace_parameters
 
         # 2. fill in request start_state

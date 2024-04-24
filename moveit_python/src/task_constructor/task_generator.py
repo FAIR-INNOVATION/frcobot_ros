@@ -206,7 +206,7 @@ class TaskGenerator():
             pick_pose.pose.orientation.y = ry
             pick_pose.pose.orientation.z = rz
             pick_pose.pose.orientation.w = rw
-            result = move_group_interface.moveToPose(pick_pose, gripper_frame=frame, tolerance=0.01, wait=True)
+            result = move_group_interface.moveToPose(pick_pose, gripper_frame=frame, tolerance=0.01, wait=True, rotation_mode="right_angle", rotation_data = [[0,0,0],[x,y,z]])
             if result.error_code.val < 1:
                 print(f"task_executer.py Error: {result.error_code}")
                 sys.exit()
