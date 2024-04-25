@@ -23,6 +23,7 @@ rosrun moveit_python task_generator.py fr10 choose_pipeline PILZ LIN
 rosrun moveit_python task_generator.py fr10 choose_follow_mode
 rosrun moveit_python task_generator.py fr10 check_json_files
 rosrun moveit_python task_generator.py fr10 detele_json_sim_content test.json
+rosrun moveit_python task_generator.py fr10 detele_json_temp
 ```
 Pick and place example for fr10:
 0 `rosrun moveit_python task_generator.py fr10 clear_scene`

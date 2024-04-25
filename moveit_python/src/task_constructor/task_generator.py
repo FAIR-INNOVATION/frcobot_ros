@@ -22,13 +22,14 @@ class TaskGenerator():
     def __init__(self, robot_name, mode, *argv):
         rospy.init_node('task_geberator_node', anonymous=True)
         
-        self.bot = moveit_commander.RobotCommander()
-        if robot_name == "robot":
-            robot_name = self.bot.get_group_names()[0]
-            robot_name = robot_name.replace("_arm", "")
-        elif not self.bot.get_group_names()[0] == f"{robot_name}_arm":
-            print(f"Wrong robot name: {robot_name}")
-            sys.exit()
+        if mode not in ["check_json_files", "detele_json_sim_content", "detele_json_temp"]:
+            self.bot = moveit_commander.RobotCommander()
+            if robot_name == "robot":
+                robot_name = self.bot.get_group_names()[0]
+                robot_name = robot_name.replace("_arm", "")
+            elif not self.bot.get_group_names()[0] == f"{robot_name}_arm":
+                print(f"Wrong robot name: {robot_name}")
+                sys.exit()
 
         print(f"task_geberator_node: | robot:{robot_name} | mode:{mode} |")
         self.arguments = sys.argv
@@ -58,6 +59,7 @@ class TaskGenerator():
             "clear_scene": self.clear_scene,
             "check_json_files": self.check_json_files,
             "detele_json_sim_content": self.detele_json_sim_content,
+            "detele_json_temp": self.detele_json_temp,
         }
 
         action = mode_actions.get(mode)
@@ -520,8 +522,24 @@ class TaskGenerator():
             print("Example: rosrun moveit_python task_generator.py fr10 check_json_files")
             sys.exit()
 
+    def detele_json_temp(self):
+        print("test.json and mod_test.json will be deleted? y/n")
+        answer = input()
+        if answer == "y":
+            directory = f'{self.home_dir}/catkin_ws/src/frcobot_ros/moveit_python/tasks/{self.robot}/test.json'
+            directory_mod = f'{self.home_dir}/catkin_ws/src/frcobot_ros/moveit_python/tasks/{self.robot}/mod_test.json'
+            if os.path.isdir(directory):
+                os.remove(directory)
+            if os.path.isdir(directory_mod):
+                os.remove(directory_mod)
+        print("detele_json_temp finished")
+        sys.exit()
+
     def detele_json_sim_content(self):
         directory = f'{self.home_dir}/catkin_ws/src/frcobot_ros/moveit_python/tasks/{self.robot}/{self.arguments[3]}'
+        if not os.path.isdir(directory):
+            print(f"There's no file in the path: {directory}")
+            sys.exit()
         directory_mod = f'{self.home_dir}/catkin_ws/src/frcobot_ros/moveit_python/tasks/{self.robot}/mod_{self.arguments[3]}'
         
         data = self.load_json(load_path=directory)
@@ -569,6 +587,7 @@ if __name__ == "__main__":
                 print("rosrun moveit_python task_generator.py fr10 choose_follow_mode")
                 print("rosrun moveit_python task_generator.py fr10 check_json_files")
                 print("rosrun moveit_python task_generator.py fr10 detele_json_sim_content test.json")
+                print("rosrun moveit_python task_generator.py fr10 detele_json_temp")
                 sys.exit()
         print("Error usage: rosrun moveit_python task_generator.py arg1 arg2 arg3 arg4 etc..")
         sys.exit()
