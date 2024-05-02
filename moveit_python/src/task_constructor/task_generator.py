@@ -14,6 +14,8 @@ from geometry_msgs.msg import PoseStamped
 from moveit_python import MoveGroupInterface
 from moveit_python import PlanningSceneInterface
 import moveit_commander
+import numpy as np
+import math
 
 END_COORDINATE = "tf_end"
 
@@ -196,7 +198,95 @@ class TaskGenerator():
             print("Example of getting desired [j1...j6]: rosrun moveit_python task_generator.py fr10 joints_position 0 0 0 0 0 0")
             sys.exit()
 
+    def vector_to_quaternion(self, point1, point2):
+        vector = np.array(point2) - np.array(point1)
+        vector_norm = vector / np.linalg.norm(vector)
+        # The z-axis is represented as [0, 0, 1]
+        z_axis = np.array([0, 0, 1])
+        cross_product = np.cross(vector_norm, z_axis)
+        dot_product = np.dot(vector_norm, z_axis)
+
+        w = 1 + dot_product
+        x = cross_product[0]
+        y = cross_product[1]
+        z = cross_product[2]
+        
+        # Normalize the quaternion
+        norm = math.sqrt(w**2 + x**2 + y**2 + z**2)
+        quaternion = np.array([w, x, y, z]) / norm
+        return quaternion
+    
+    def convert2right_vector(self, point1, point2):
+        # Calculate the vector from point1 to point2
+        vector = np.array(point2) - np.array(point1)
+        vector_list = []
+        for i in range(0,3):
+            if i == np.argmax(abs(vector)):
+                vector_list.append(vector[i]/abs(vector[i]))
+            else:
+                vector_list.append(0)
+        # Return the vector and the nearest normal vector
+        return vector_list
+    
+    def multiply_quat(self, q1, q2):
+            w0, x0, y0, z0 = q1
+            w1, x1, y1, z1 = q2
+            w = w0 * w1 - x0 * x1 - y0 * y1 - z0 * z1
+            x = w0 * x1 + x0 * w1 + y0 * z1 - z0 * y1
+            y = w0 * y1 - x0 * z1 + y0 * w1 + z0 * x1
+            z = w0 * z1 + x0 * y1 - y0 * x1 + z0 * w1
+            return [w, x, y, z]
+
+    def rot_modify(self, dx,dy,dz,rx,ry,rz,rw, rotation_mode, rotation_data):
+        point1 = (0, 0, 0)
+        point2 = (dx, dy, dz)
+
+        if rotation_mode==None:
+            x = rx
+            y = ry
+            z = rz
+            w = rw
+        elif rotation_data==None:
+            print("Error! 'rotation_data' is None")
+            sys.exit()
+        elif rotation_mode == "right_angle":
+            # rotation_data = [[0,0,0],[1,1,1]]
+            point1 = (rotation_data[0][0], rotation_data[0][1], rotation_data[0][2])
+            point2 = (dx*rotation_data[1][0], dy*rotation_data[1][1], dz*rotation_data[1][2])
+
+            vector = self.convert2right_vector(point1,point2)
+            quat = self.vector_to_quaternion(point1,vector)
+            quat = self.multiply_quat(quat, [0.7071078,0.7071078,0,0])
+            if (math.sqrt(dx*dx+dy*dy) < 0.4) and (dz < 0.3):
+                if (dx > -0.3) and (dx < 0.3):
+                    x = 0.5
+                    y = 0.5
+                    z = -0.5
+                    w = 0.5 
+                else:
+                    x = 0
+                    y = 0.7071078
+                    z = 0
+                    w = 0.7071078
+            else:
+                x = quat[1]
+                y = quat[2]
+                z = quat[3]
+                w = quat[0]
+        elif rotation_mode == "vector2point":
+            # rotation_data = [[0,0,0],[1,0,0]]
+            quaternion = self.vector_to_quaternion(rotation_data[0],rotation_data[1])
+            x = quaternion[1]
+            y = quaternion[2]
+            z = quaternion[3]
+            w = quaternion[0]
+        else:
+            print("rotation_mode error")
+            sys.exit()
+        return [x,y,z,w]
+    
     def bot_move(self,bot_group_name, frame ,x,y,z,rx,ry,rz,rw):
+        # rotation_mode= "None" or "right_angle" or "vector2point"
         if self.task_executer:
             move_group_interface = MoveGroupInterface(group=bot_group_name, frame="world")
             pick_pose = PoseStamped()
@@ -208,7 +298,7 @@ class TaskGenerator():
             pick_pose.pose.orientation.y = ry
             pick_pose.pose.orientation.z = rz
             pick_pose.pose.orientation.w = rw
-            result = move_group_interface.moveToPose(pick_pose, gripper_frame=frame, tolerance=0.01, wait=True, rotation_mode="right_angle", rotation_data = [[0,0,0],[x,y,z]])
+            result = move_group_interface.moveToPose(pick_pose, gripper_frame=frame, tolerance=0.01, wait=True)
             if result.error_code.val < 1:
                 print(f"task_executer.py Error: {result.error_code}")
                 sys.exit()
@@ -250,7 +340,8 @@ class TaskGenerator():
                 listener = TransformListener()
                 listener.waitForTransform("/world", f"/{target}", rospy.Time(), rospy.Duration(5.0))
                 pos, quat = listener.lookupTransform("/world", f"/{target}", rospy.Time())
-                self.bot_move(bot_group_names[0],target,pos[0],pos[1],pos[2],quat[0],quat[1],quat[2],quat[3])
+                mod_quad = self.rot_modify(pos[0],pos[1],pos[2],quat[0],quat[1],quat[2],quat[3], rotation_mode="right_angle", rotation_data = [[0,0,0],[pos[0],pos[1],pos[2]]])
+                self.bot_move(bot_group_names[0],target,pos[0],pos[1],pos[2],mod_quad[0],mod_quad[1],mod_quad[2],mod_quad[3])
                 self.joint_data1[target] = {'position': pos, 'quaternion': quat}
                 self.joint_data2[self.mode] = self.joint_data1
                 self.joint_data3[time.time()] = self.joint_data2
@@ -265,9 +356,10 @@ class TaskGenerator():
                             last_obj = value['spawn_object'][target]
                 # Check if a spawn_object was found and print its coordinates
                 if last_obj:
-                    self.bot_move(bot_group_names[0],END_COORDINATE,last_obj['x'],last_obj['y'],last_obj['z'],last_obj['rx'],last_obj['ry'],last_obj['rz'],last_obj['rw'])
+                    mod_quad = self.rot_modify(last_obj['x'],last_obj['y'],last_obj['z'],last_obj['rx'],last_obj['ry'],last_obj['rz'],last_obj['rw'], rotation_mode="right_angle", rotation_data = [[0,0,0],[last_obj['x'],last_obj['y'],last_obj['z']]])
+                    self.bot_move(bot_group_names[0],END_COORDINATE,last_obj['x'],last_obj['y'],last_obj['z'],mod_quad[0],mod_quad[1],mod_quad[2],mod_quad[3])
                     print(f"Last spawn_object coordinates: {target} x={last_obj['x']}, y={last_obj['y']}, z={last_obj['z']}")
-                    self.joint_data1[END_COORDINATE] = {'position': [last_obj['x'],last_obj['y'],last_obj['z']], 'quaternion': [last_obj['rx'],last_obj['ry'],last_obj['rz'],last_obj['rw']]}
+                    self.joint_data1[END_COORDINATE] = {'position': [last_obj['x'],last_obj['y'],last_obj['z']], 'quaternion': [mod_quad[0],mod_quad[1],mod_quad[2],mod_quad[3]]}
                     self.joint_data2[self.mode] = self.joint_data1
                     self.joint_data3[time.time()] = self.joint_data2
                     self.save_json(self.joint_data3)
@@ -525,13 +617,17 @@ class TaskGenerator():
     def detele_json_temp(self):
         print("test.json and mod_test.json will be deleted? y/n")
         answer = input()
-        if answer == "y":
+        if answer.lower() == "y":
             directory = f'{self.home_dir}/catkin_ws/src/frcobot_ros/moveit_python/tasks/{self.robot}/test.json'
             directory_mod = f'{self.home_dir}/catkin_ws/src/frcobot_ros/moveit_python/tasks/{self.robot}/mod_test.json'
-            if os.path.isdir(directory):
+            if os.path.isfile(directory):
                 os.remove(directory)
-            if os.path.isdir(directory_mod):
+                print(f"removed: {directory}")
+            if os.path.isfile(directory_mod):
                 os.remove(directory_mod)
+                print(f"removed: {directory_mod}")
+        else:
+            print("Files are not deleted")
         print("detele_json_temp finished")
         sys.exit()
 
