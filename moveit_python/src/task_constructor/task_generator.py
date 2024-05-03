@@ -153,7 +153,6 @@ class TaskGenerator():
         self.position = msg.position
 
     def joints_position(self):
-        # if 5 param then this esle that
         if (len(self.arguments) == 3) or (len(self.arguments) == 9):
             self.subscriber = rospy.Subscriber("/joint_states", JointState, self.joints_position_callback)
             while not rospy.is_shutdown():
@@ -199,10 +198,17 @@ class TaskGenerator():
             sys.exit()
 
     def vector_to_quaternion(self, point1, point2):
-        vector = np.array(point2) - np.array(point1)
+        vector = np.array(point2)  - np.array(point1)
         vector_norm = vector / np.linalg.norm(vector)
-        # The z-axis is represented as [0, 0, 1]
-        z_axis = np.array([0, 0, 1])
+        print(vector_norm)
+        if abs(vector[0]) == 1.0:
+            z_axis = np.array([1, 0, 0])
+        elif abs(vector[1]) == 1.0:
+            z_axis = np.array([-abs(vector[1]), 0, 0])
+        elif abs(vector[2]) == 1.0:
+            z_axis = np.array([0, 0, -abs(vector[1])])
+        else:
+            z_axis = np.array([-1, 0, 0])
         cross_product = np.cross(vector_norm, z_axis)
         dot_product = np.dot(vector_norm, z_axis)
 
@@ -210,15 +216,18 @@ class TaskGenerator():
         x = cross_product[0]
         y = cross_product[1]
         z = cross_product[2]
-        
-        # Normalize the quaternion
+
         norm = math.sqrt(w**2 + x**2 + y**2 + z**2)
+        if norm < 1e-6:
+            print("Warning: norm is very close to zero. Returning a default quaternion.")
+            return [0, 0, 0, 1] # Return a default quaternion
+        
         quaternion = np.array([w, x, y, z]) / norm
         return quaternion
     
     def convert2right_vector(self, point1, point2):
         # Calculate the vector from point1 to point2
-        vector = np.array(point2) - np.array(point1)
+        vector = np.array(point2)  - np.array(point1)
         vector_list = []
         for i in range(0,3):
             if i == np.argmax(abs(vector)):
@@ -235,7 +244,7 @@ class TaskGenerator():
             x = w0 * x1 + x0 * w1 + y0 * z1 - z0 * y1
             y = w0 * y1 - x0 * z1 + y0 * w1 + z0 * x1
             z = w0 * z1 + x0 * y1 - y0 * x1 + z0 * w1
-            return [w, x, y, z]
+            return [x, y, z, w]
 
     def rot_modify(self, dx,dy,dz,rx,ry,rz,rw, rotation_mode, rotation_data):
         point1 = (0, 0, 0)
@@ -252,11 +261,10 @@ class TaskGenerator():
         elif rotation_mode == "right_angle":
             # rotation_data = [[0,0,0],[1,1,1]]
             point1 = (rotation_data[0][0], rotation_data[0][1], rotation_data[0][2])
-            point2 = (dx*rotation_data[1][0], dy*rotation_data[1][1], dz*rotation_data[1][2])
+            point2 = (rotation_data[1][0], rotation_data[1][1], rotation_data[1][2])
 
             vector = self.convert2right_vector(point1,point2)
             quat = self.vector_to_quaternion(point1,vector)
-            quat = self.multiply_quat(quat, [0.7071078,0.7071078,0,0])
             if (math.sqrt(dx*dx+dy*dy) < 0.4) and (dz < 0.3):
                 if (dx > -0.3) and (dx < 0.3):
                     x = 0.5
@@ -429,7 +437,16 @@ class TaskGenerator():
                 if (len(scene.getKnownCollisionObjects()) == 0):
                     print("Error! No object to attach")
                     sys.exit()
-                scene.attachBox(self.arguments[3], 0.05, 0.05, 0.05, 0, 0, 0, link_name=END_COORDINATE)
+                data = self.load_json()
+                last_obj = None
+                for entry in data:
+                    for key, value in entry.items():
+                        if ('spawn_object' in value) and (self.arguments[3] in value['spawn_object']):
+                            last_obj = value['spawn_object'][self.arguments[3]]
+                if last_obj is None:
+                    print(f"There's no {self.arguments[3]} spawned")
+                    sys.exit()
+                scene.attachBox(self.arguments[3], 0.05, 0.05, 0.05, 0, 0, 0, rx=last_obj['rx'], ry=last_obj['ry'], rz=last_obj['rz'], rw=last_obj['rw'], link_name=END_COORDINATE)
             self.joint_data1[self.arguments[3]] = self.arguments[4]
             self.joint_data2[self.mode] = self.joint_data1
             self.joint_data3[time.time()] = self.joint_data2
@@ -448,12 +465,22 @@ class TaskGenerator():
                 if (len(scene.getKnownAttachedObjects()) == 0):
                     print("Error! No attached object")
                     sys.exit()
+                data = self.load_json()
+                last_obj = None
+                for entry in data:
+                    for key, value in entry.items():
+                        if ('spawn_object' in value) and (self.arguments[3] in value['spawn_object']):
+                            last_obj = value['spawn_object'][self.arguments[3]]
+                if last_obj is None:
+                    print(f"There's no {self.arguments[3]} spawned")
+                    sys.exit()
                 scene.removeAttachedObject(self.arguments[3])
                 target = self.arguments[4]
                 print(f"Argument is {target}")
                 listener = TransformListener()
                 listener.waitForTransform("/world", f"/{target}", rospy.Time(), rospy.Duration(5.0))
                 pos, quat = listener.lookupTransform("/world", f"/{target}", rospy.Time())
+                quat = self.multiply_quat([quat[3], quat[0], quat[1], quat[2]], [last_obj['rw'], last_obj['rx'], last_obj['ry'], last_obj['rz']])
                 time.sleep(5)
                 scene.addBox(self.arguments[3], 0.05, 0.05, 0.05, pos[0], pos[1], pos[2], quat[0], quat[1], quat[2], quat[3], use_service=True)
             self.joint_data1[self.arguments[3]] = self.arguments[4]
@@ -633,7 +660,7 @@ class TaskGenerator():
 
     def detele_json_sim_content(self):
         directory = f'{self.home_dir}/catkin_ws/src/frcobot_ros/moveit_python/tasks/{self.robot}/{self.arguments[3]}'
-        if not os.path.isdir(directory):
+        if not os.path.isfile(directory):
             print(f"There's no file in the path: {directory}")
             sys.exit()
         directory_mod = f'{self.home_dir}/catkin_ws/src/frcobot_ros/moveit_python/tasks/{self.robot}/mod_{self.arguments[3]}'

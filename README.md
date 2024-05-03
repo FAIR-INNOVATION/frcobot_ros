@@ -1,5 +1,9 @@
 # frcobot_ros
 
+This repository is dedicated to providing comprehensive resources and tools for working with ERACOBOT manipulators. 
+
+![alt text](./docs/demo.gif)
+
 #### Install a virtual box in your PC (optional)
 
 I will provide some recoureces for windows users. If you are using Linux then you can skip some guides.
@@ -22,7 +26,6 @@ vboxuser ALL=(ALL:ALL) ALL
 %vboxuser ALL=(ALL) ALL
 ```
 
-![alt text](./root.png)
 
 Save the file and write "exit"
 

@@ -1,11 +1,15 @@
 # moveit python
 
+Please the the tutorial provided in the `docs` folder.
+
 1. Use executor example
 ```bash
 rosrun moveit_python task_executer.py
 ```
+
 2. Use generator example
 ```bash
+rosrun moveit_python task_generator.py help
 rosrun moveit_python task_generator.py robot get_robot_param
 rosrun moveit_python task_generator.py fr10 joints_position
 rosrun moveit_python task_generator.py fr10 joints_position 0 0 0 0 0 0
@@ -25,7 +29,9 @@ rosrun moveit_python task_generator.py fr10 check_json_files
 rosrun moveit_python task_generator.py fr10 detele_json_sim_content test.json
 rosrun moveit_python task_generator.py fr10 detele_json_temp
 ```
+
 Pick and place example for fr10:
+```bash
 0 `rosrun moveit_python task_generator.py fr10 clear_scene`
 1 `rosrun moveit_python task_generator.py fr10 remove_object hello_box`
 2 `rosrun moveit_python task_generator.py fr10 joints_position 0 -1.57 1.57 0 0 0`
@@ -41,8 +47,10 @@ Pick and place example for fr10:
 12 `rosrun moveit_python task_generator.py fr10 choose_pipeline OMPL RRTConnect`
 13 `rosrun moveit_python task_generator.py fr10 joints_position 0 -1.57 1.57 0 0 0`
 14 `rosrun moveit_python task_generator.py fr10 detele_json_sim_content test.json`
+```
 
 Pick and place example for fr3:
+```bash
 0 `rosrun moveit_python task_generator.py fr3 clear_scene`
 1 `rosrun moveit_python task_generator.py fr3 remove_object hello_box`
 2 `rosrun moveit_python task_generator.py fr3 joints_position 0 -1.57 1.57 0 0 0`
@@ -58,11 +66,25 @@ Pick and place example for fr3:
 12 `rosrun moveit_python task_generator.py fr3 choose_pipeline OMPL RRTConnect`
 13 `rosrun moveit_python task_generator.py fr3 joints_position 0 -1.57 1.57 0 0 0`
 14 `rosrun moveit_python task_generator.py fr3 detele_json_sim_content test.json`
+```
 
 3. Use executor json example
 ```bash
 rosrun moveit_python task_executer_json.py fr10 task_grip_sim.json
 ```
 
-1) Remove time delay
-3) Move algorithm
+### Additional mods
+
+`task_generator.py` provides sevewral gripper orientations.
+
+1. If mode= None:
+
+![alt text](../docs/none.gif)
+
+2. If mode= 'right_angle':
+
+![alt text](../docs/rightangle.gif)
+
+3. If mode= 'vector2point':
+
+![alt text](../docs/vector2point.gif)

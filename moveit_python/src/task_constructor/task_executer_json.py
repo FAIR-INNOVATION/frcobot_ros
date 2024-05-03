@@ -17,6 +17,7 @@ def task(mode_list, name_list, content_list):
     print(f"Name list: {name_list}\n")
     print("#"*80)
     pipeline = None
+    latest_spawn_values = None  # This will store the latest values from value_list when mode is "spawn_object"
     for i in range(0, len(mode_list)):
         print("+"*40)
         print(f"TASK {i+1}: {mode_list[i]} {name_list[i]} {content_list[i]}")
@@ -66,13 +67,22 @@ def task(mode_list, name_list, content_list):
             for axis, value in content_list[i].items():
                 axis_list.append(axis)
                 value_list.append(float(value))
+
+            latest_spawn_values = value_list
             scene.addBox(name_list[i], 0.05, 0.05, 0.05, value_list[0], value_list[1], value_list[2], value_list[3], value_list[4], value_list[5], value_list[6], use_service=True)
             time.sleep(5)
             print("-"*40)
 
         elif mode_list[i] == "attach_object":
+            if latest_spawn_values:
+                # Extract the required values from the latest "spawn_object"
+                rx = latest_spawn_values[3]
+                ry = latest_spawn_values[4]
+                rz = latest_spawn_values[5]
+                rw = latest_spawn_values[6]
+
             print(f"'{name_list[i]}' attached to '{content_list[i]}'")
-            scene.attachBox(name_list[i], 0.05, 0.05, 0.05, 0, 0, 0, link_name=content_list[i])
+            scene.attachBox(name_list[i], 0.05, 0.05, 0.05, 0, 0, 0, rx=rx, ry=ry, rz=rz, rw=rw, link_name=content_list[i])
             time.sleep(5)
             print("-"*40)
 
