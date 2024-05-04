@@ -183,7 +183,7 @@ class TaskGenerator():
                     group_names = self.bot.get_group_names()
                     move_group_interface = MoveGroupInterface(group=group_names[0], frame="world")
                     move_group_interface.moveToJointPosition(joints=task_joints, positions=task_positions, tolerance=0.01, wait=True)
-                    time.sleep(5)
+                    time.sleep(1)
             self.joint_data1["positions"] = position_list
             self.joint_data2[self.mode] = self.joint_data1
             self.joint_data3[time.time()] = self.joint_data2
@@ -236,7 +236,37 @@ class TaskGenerator():
                 vector_list.append(0)
         # Return the vector and the nearest normal vector
         return vector_list
-    
+
+    def diff_quat(self, q1, q2):
+        # Function to multiply two quaternions
+        def multiply_quat(q1, q2):
+            w0, x0, y0, z0 = q1
+            w1, x1, y1, z1 = q2
+            w = w0 * w1 - x0 * x1 - y0 * y1 - z0 * z1
+            x = w0 * x1 + x0 * w1 + y0 * z1 - z0 * y1
+            y = w0 * y1 - x0 * z1 + y0 * w1 + z0 * x1
+            z = w0 * z1 + x0 * y1 - y0 * x1 + z0 * w1
+            return [x, y, z, w]
+
+        # Function to compute the conjugate of a quaternion
+        def conjugate(q):
+            w, x, y, z = q
+            return [w, -x, -y, -z]
+
+        # Function to compute the norm of a quaternion
+        def norm(q):
+            w, x, y, z = q
+            return math.sqrt(w**2 + x**2 + y**2 + z**2)
+
+        # Function to compute the inverse of a quaternion
+        def inverse(q):
+            conj = conjugate(q)
+            norm_val = norm(q)
+            return [conj[0] / norm_val, conj[1] / norm_val, conj[2] / norm_val, conj[3] / norm_val]
+
+        inv_q1 = inverse(q1)
+        return multiply_quat(q2, inv_q1)
+
     def multiply_quat(self, q1, q2):
             w0, x0, y0, z0 = q1
             w1, x1, y1, z1 = q2
@@ -417,8 +447,8 @@ class TaskGenerator():
                 rot[i-7]=float(self.arguments[i])
             print(f"Spawn object: {self.arguments[3]} {xyz} {rot}")
             if self.task_executer:
-                scene = PlanningSceneInterface("/base_link")
-                scene.addBox(self.arguments[3], 0.05, 0.05, 0.05, xyz[0], xyz[1], xyz[2], rot[0], rot[1], rot[2], rot[3], use_service=True)
+                scene = PlanningSceneInterface("/world")
+                scene.addBox(self.arguments[3], 0.04, 0.04, 0.04, xyz[0], xyz[1], xyz[2], rx=rot[0], ry=rot[1], rz=rot[2], rw=rot[3], use_service=True)
             self.joint_data1[self.arguments[3]] = {'x':xyz[0],'y':xyz[1],'z':xyz[2], 'rx':rot[0],'ry':rot[1],'rz':rot[2], 'rw':rot[3]}
             self.joint_data2[self.mode] = self.joint_data1
             self.joint_data3[time.time()] = self.joint_data2
@@ -446,8 +476,14 @@ class TaskGenerator():
                 if last_obj is None:
                     print(f"There's no {self.arguments[3]} spawned")
                     sys.exit()
-                scene.attachBox(self.arguments[3], 0.05, 0.05, 0.05, 0, 0, 0, rx=last_obj['rx'], ry=last_obj['ry'], rz=last_obj['rz'], rw=last_obj['rw'], link_name=END_COORDINATE)
-            self.joint_data1[self.arguments[3]] = self.arguments[4]
+
+                listener = TransformListener()
+                listener.waitForTransform("/world", f"/{self.arguments[4]}", rospy.Time(), rospy.Duration(5.0))
+                pos, quat_end = listener.lookupTransform("/world", f"/{self.arguments[4]}", rospy.Time())
+
+                quat = self.multiply_quat([quat_end[3], -quat_end[0], -quat_end[1], -quat_end[2]], [last_obj['rw'], last_obj['rx'], last_obj['ry'], last_obj['rz']])
+                scene.attachBox(self.arguments[3], 0.04, 0.04, 0.04, 0, 0, 0, rx=quat[0], ry=quat[1], rz=quat[2], rw=quat[3], link_name=END_COORDINATE)
+            self.joint_data1[self.arguments[3]] = {self.arguments[4]:quat_end}
             self.joint_data2[self.mode] = self.joint_data1
             self.joint_data3[time.time()] = self.joint_data2
             self.save_json(self.joint_data3)
@@ -467,22 +503,32 @@ class TaskGenerator():
                     sys.exit()
                 data = self.load_json()
                 last_obj = None
+                last_end_tf = None
                 for entry in data:
                     for key, value in entry.items():
                         if ('spawn_object' in value) and (self.arguments[3] in value['spawn_object']):
                             last_obj = value['spawn_object'][self.arguments[3]]
+                        if ('attach_object' in value) and (self.arguments[3] in value['attach_object']):
+                            last_end_tf = value['attach_object'][self.arguments[3]]
                 if last_obj is None:
                     print(f"There's no {self.arguments[3]} spawned")
                     sys.exit()
-                scene.removeAttachedObject(self.arguments[3])
+                if last_end_tf is None:
+                    print(f"There's no {self.arguments[3]} attached")
+                    sys.exit()
+                
                 target = self.arguments[4]
+                last_end_tf = last_end_tf[self.arguments[4]]
+
+                scene.removeAttachedObject(self.arguments[3])
                 print(f"Argument is {target}")
                 listener = TransformListener()
                 listener.waitForTransform("/world", f"/{target}", rospy.Time(), rospy.Duration(5.0))
                 pos, quat = listener.lookupTransform("/world", f"/{target}", rospy.Time())
+                quat = self.diff_quat([last_end_tf[3], last_end_tf[0], last_end_tf[1], last_end_tf[2]], [quat[3], quat[0], quat[1], quat[2]])
                 quat = self.multiply_quat([quat[3], quat[0], quat[1], quat[2]], [last_obj['rw'], last_obj['rx'], last_obj['ry'], last_obj['rz']])
-                time.sleep(5)
-                scene.addBox(self.arguments[3], 0.05, 0.05, 0.05, pos[0], pos[1], pos[2], quat[0], quat[1], quat[2], quat[3], use_service=True)
+                time.sleep(1)
+                scene.addBox(self.arguments[3], 0.04, 0.04, 0.04, pos[0], pos[1], pos[2], rx=quat[0], ry=quat[1], rz=quat[2], rw=quat[3], use_service=True)
             self.joint_data1[self.arguments[3]] = self.arguments[4]
             self.joint_data2[self.mode] = self.joint_data1
             self.joint_data3[time.time()] = self.joint_data2

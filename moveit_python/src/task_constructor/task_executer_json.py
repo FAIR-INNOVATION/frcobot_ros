@@ -10,6 +10,15 @@ from tf import TransformListener
 import numpy as np
 import moveit_commander
 
+def multiply_quat(q1, q2):
+        w0, x0, y0, z0 = q1
+        w1, x1, y1, z1 = q2
+        w = w0 * w1 - x0 * x1 - y0 * y1 - z0 * z1
+        x = w0 * x1 + x0 * w1 + y0 * z1 - z0 * y1
+        y = w0 * y1 - x0 * z1 + y0 * w1 + z0 * x1
+        z = w0 * z1 + x0 * y1 - y0 * x1 + z0 * w1
+        return [x, y, z, w]
+
 def task(mode_list, name_list, content_list):
     print("#"*80)
     print(f"Task lenght: {len(mode_list)}\n")
@@ -18,6 +27,7 @@ def task(mode_list, name_list, content_list):
     print("#"*80)
     pipeline = None
     latest_spawn_values = None  # This will store the latest values from value_list when mode is "spawn_object"
+    latest_rot = None
     for i in range(0, len(mode_list)):
         print("+"*40)
         print(f"TASK {i+1}: {mode_list[i]} {name_list[i]} {content_list[i]}")
@@ -29,7 +39,7 @@ def task(mode_list, name_list, content_list):
                 joint_list.append(joint)
                 pos_list.append(float(pos))
             move_group_interface.moveToJointPosition(joints=joint_list, positions=pos_list, tolerance=0.01, wait=True)
-            time.sleep(5)
+            time.sleep(3)
             print("-"*40)
 
         elif mode_list[i] == "end_coordinate":
@@ -38,6 +48,7 @@ def task(mode_list, name_list, content_list):
                     position = coordinate
                 elif loc_type == "quaternion":
                     quaternion = coordinate
+                    latest_rot = coordinate
                 else:
                     print("end_coordinate error")
                     sys.exit()
@@ -70,25 +81,30 @@ def task(mode_list, name_list, content_list):
 
             latest_spawn_values = value_list
             scene.addBox(name_list[i], 0.05, 0.05, 0.05, value_list[0], value_list[1], value_list[2], value_list[3], value_list[4], value_list[5], value_list[6], use_service=True)
-            time.sleep(5)
+            time.sleep(1)
             print("-"*40)
 
         elif mode_list[i] == "attach_object":
             if latest_spawn_values:
-                # Extract the required values from the latest "spawn_object"
                 rx = latest_spawn_values[3]
                 ry = latest_spawn_values[4]
                 rz = latest_spawn_values[5]
                 rw = latest_spawn_values[6]
+                if latest_rot:
+                   rx,ry,rz,rw = multiply_quat([latest_rot[3],-latest_rot[0],-latest_rot[1],-latest_rot[2]], [rw,rx,ry,rz])
+            else:
+                print(f"No latest_spawn_values!")
 
-            print(f"'{name_list[i]}' attached to '{content_list[i]}'")
-            scene.attachBox(name_list[i], 0.05, 0.05, 0.05, 0, 0, 0, rx=rx, ry=ry, rz=rz, rw=rw, link_name=content_list[i])
-            time.sleep(5)
+            for link_name, coordinate in content_list[i].items():
+                link_name = link_name
+            print(f"'{name_list[i]}' attached to '{link_name}'")
+            scene.attachBox(name_list[i], 0.05, 0.05, 0.05, 0, 0, 0, rx=rx, ry=ry, rz=rz, rw=rw, link_name=link_name)
+            time.sleep(1)
             print("-"*40)
 
         elif mode_list[i] == "detach_object":
             scene.removeAttachedObject(name_list[i])
-            time.sleep(5)
+            time.sleep(1)
             print("-"*40)
 
         elif mode_list[i] == "remove_object":
@@ -99,6 +115,7 @@ def task(mode_list, name_list, content_list):
             msg.data = content_list[i]
             print(f"Open: {msg.data}")
             pub.publish(msg)
+            time.sleep(1)
             print("-"*40)
 
         elif mode_list[i] == "gripper_close":
@@ -106,6 +123,7 @@ def task(mode_list, name_list, content_list):
             msg.data = content_list[i]
             print(f"Close: {msg.data}")
             pub.publish(msg)
+            time.sleep(1)
             print("-"*40)
 
         elif mode_list[i] == "choose_pipeline":

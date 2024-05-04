@@ -70,6 +70,7 @@ Pick and place example for fr3:
 
 3. Use executor json example
 ```bash
+rosrun moveit_python task_executer_json.py fr10 test.json
 rosrun moveit_python task_executer_json.py fr10 task_grip_sim.json
 ```
 
