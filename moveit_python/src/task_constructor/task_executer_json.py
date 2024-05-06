@@ -9,6 +9,7 @@ from std_msgs.msg import Float64
 from tf import TransformListener
 import numpy as np
 import moveit_commander
+import rospkg
 
 def multiply_quat(q1, q2):
         w0, x0, y0, z0 = q1
@@ -178,6 +179,10 @@ if __name__ == '__main__':
             sys.exit()
 
         rospy.init_node('pick_and_place_node')
+
+        rospack = rospkg.RosPack()
+        package_path = rospack.get_path('moveit_python')
+
         bot = moveit_commander.RobotCommander()
         if not bot.get_group_names()[0] == f"{robot}_arm":
             print(f"Wrong robot name: {robot}")
@@ -189,7 +194,7 @@ if __name__ == '__main__':
         pub = rospy.Publisher('/rh_p12_rn_position/command', Float64, queue_size=10)
         rate = rospy.Rate(10)
 
-        file_path = f"/home/vboxuser/catkin_ws/src/frcobot_ros/moveit_python/tasks/{robot}/{mode}"
+        file_path = f"{package_path}/tasks/{robot}/{mode}"
         with open(file_path, 'r') as file:
             data = json.load(file)
 

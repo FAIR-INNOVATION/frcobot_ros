@@ -16,6 +16,7 @@ from moveit_python import PlanningSceneInterface
 import moveit_commander
 import numpy as np
 import math
+import rospkg
 
 END_COORDINATE = "tf_end"
 
@@ -23,7 +24,10 @@ END_COORDINATE = "tf_end"
 class TaskGenerator():
     def __init__(self, robot_name, mode, *argv):
         rospy.init_node('task_geberator_node', anonymous=True)
-        
+
+        rospack = rospkg.RosPack()
+        self.package_path = rospack.get_path('moveit_python')
+
         if mode not in ["check_json_files", "detele_json_sim_content", "detele_json_temp"]:
             self.bot = moveit_commander.RobotCommander()
             if robot_name == "robot":
@@ -74,7 +78,7 @@ class TaskGenerator():
 
     def load_json(self, load_path=None):
         if load_path == None:
-            load_path = f'{self.home_dir}/catkin_ws/src/frcobot_ros/moveit_python/tasks/{self.robot}/test.json'
+            load_path = f'{self.package_path}/tasks/{self.robot}/test.json'
         try:
             with open(load_path, 'r') as file:
                 data = json.load(file)
@@ -88,7 +92,7 @@ class TaskGenerator():
 
     def save_json(self, data_local, save_path=None):
         if save_path == None:
-            save_path = f'{self.home_dir}/catkin_ws/src/frcobot_ros/moveit_python/tasks/{self.robot}/test.json'
+            save_path = f'{self.package_path}/tasks/{self.robot}/test.json'
         try:
             with open(save_path, 'r') as file:
                 if os.stat(save_path).st_size == 0:
@@ -656,8 +660,8 @@ class TaskGenerator():
 
     def check_json_files(self):
         if (len(self.arguments) == 3):
-            # directory = f'{self.home_dir}/catkin_ws/src/frcobot_ros/moveit_python/tasks/{self.robot}/{self.arguments[3]}'
-            directory = f'{self.home_dir}/catkin_ws/src/frcobot_ros/moveit_python/tasks/{self.robot}'
+            # directory = f'{self.package_path}/tasks/{self.robot}/{self.arguments[3]}'
+            directory = f'{self.package_path}/tasks/{self.robot}'
             print("#"*80)
             print(f"Directory: {directory}")
             print("#"*80)
@@ -691,8 +695,8 @@ class TaskGenerator():
         print("test.json and mod_test.json will be deleted? y/n")
         answer = input()
         if answer.lower() == "y":
-            directory = f'{self.home_dir}/catkin_ws/src/frcobot_ros/moveit_python/tasks/{self.robot}/test.json'
-            directory_mod = f'{self.home_dir}/catkin_ws/src/frcobot_ros/moveit_python/tasks/{self.robot}/mod_test.json'
+            directory = f'{self.package_path}/tasks/{self.robot}/test.json'
+            directory_mod = f'{self.package_path}/tasks/{self.robot}/mod_test.json'
             if os.path.isfile(directory):
                 os.remove(directory)
                 print(f"removed: {directory}")
@@ -705,11 +709,11 @@ class TaskGenerator():
         sys.exit()
 
     def detele_json_sim_content(self):
-        directory = f'{self.home_dir}/catkin_ws/src/frcobot_ros/moveit_python/tasks/{self.robot}/{self.arguments[3]}'
+        directory = f'{self.package_path}/tasks/{self.robot}/{self.arguments[3]}'
         if not os.path.isfile(directory):
             print(f"There's no file in the path: {directory}")
             sys.exit()
-        directory_mod = f'{self.home_dir}/catkin_ws/src/frcobot_ros/moveit_python/tasks/{self.robot}/mod_{self.arguments[3]}'
+        directory_mod = f'{self.package_path}/tasks/{self.robot}/mod_{self.arguments[3]}'
         
         data = self.load_json(load_path=directory)
 
